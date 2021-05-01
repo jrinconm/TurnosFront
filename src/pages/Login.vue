@@ -37,6 +37,7 @@
               ></q-input>
             </q-form>
           </q-card-section>
+          <p v-if="error" class="error">Email o contraseña errónea.</p>
           <q-card-actions class="q-px-md">
             <q-btn
               unelevated
@@ -44,9 +45,10 @@
               size="lg"
               class="full-width"
               label="Login"
+              @click="login"
             />
           </q-card-actions>
-          <p v-if="error" class="error">Email o contraseña errónea.</p>
+
           <q-card-section class="text-center q-pa-none">
             <p class="text-grey-6">Darse de alta</p>
           </q-card-section>
@@ -58,6 +60,7 @@
 </template>
 
 <script>
+import { api } from "boot/axios";
 export default {
   name: "Login",
   data() {
@@ -69,8 +72,16 @@ export default {
   },
   methods: {
     login() {
-      console.log(this.email);
-      console.log(this.password);
+      let body = { username: this.email, pass: this.password };
+      api
+        .post("/api/auth/signin", body)
+        .then(response => {
+          this.data = response.data;
+          console.log(this.data);
+        })
+        .catch(error => {
+          console.log(error);
+        });
     }
   }
 };
