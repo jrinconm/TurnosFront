@@ -150,10 +150,9 @@ export default {
     }
   },
   beforeMount() {
-    // set "now" to previous day
+    // set "now" a hoy
     this.selectedDate = QCalendar.today();
-    const now = QCalendar.parseTimestamp(this.selectedDate);
-    this.now = QCalendar.getDate(QCalendar.prevDay(now));
+    this.now = QCalendar.parseTimestamp(this.selectedDate);
   },
   methods: {
     calendarNext() {
