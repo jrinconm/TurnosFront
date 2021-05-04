@@ -141,14 +141,26 @@ export default {
   data() {
     return {
       selectedDate: "",
+      JWTToken:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjIwMTU0MTM5LCJleHAiOjE2MjAyNDA1Mzl9.8A0lgXraLz1f3jANjKBKi2HyQ5o5hAHInNCMvOncw-I",
       now: "",
-      events: []
+      events: [],
+      usuario: {
+        id: 2,
+        username: "Jose",
+        email: "jose@email.com",
+        password:
+          "$2a$08$i/f3JtkdU.t.EoTDO.ETtOT740NRApssAl/xmbXVRb3eBbnuR.jcy",
+        createdAt: "2021-05-04T18:58:23.000Z",
+        updatedAt: "2021-05-04T18:58:23.000Z",
+        RolId: 2,
+        DepartamentoId: 2
+      }
     };
   },
-  computed: {
-    usuario: function() {
-      return "2";
-    }
+  computed: {},
+  mounted() {
+    this.obtendatos();
   },
   beforeMount() {
     // set "now" a hoy
@@ -162,10 +174,13 @@ export default {
     },
     obtendatos() {
       api
-        .get("/api/diapresencial/name?usuario=" + this.usuario)
+        .get("/api/diapresencial/name?usuario=" + this.usuario.id, {
+          headers: { "x-access-token": this.JWTToken }
+        })
         .then(response => {
           this.data = response.data;
-          console.log(this.data);
+          this.events.splice(0);
+          this.events = [...this.data];
         })
         .catch(error => {
           console.log(error);
@@ -175,40 +190,40 @@ export default {
       this.$refs.calendar.prev();
     },
     onClickDay2(data) {
+      console.log(data.scope.timestamp.date);
+      // Por defecto añado el dia
       let aditar = true;
+      // Recorro los eventos y miro si ya tengo marcado el dia
       for (let i = 0; i < this.events.length; ++i) {
         if (
-          this.events[i].dia.date == getCurrentDay(data.scope.timestamp.day) &&
-          this.events[i].dia.title === this.usuario.displayName
+          this.events[i].dia.date == data.scope.timestamp.date &&
+          this.events[i].dia.title === this.usuario.username
         ) {
-          // Obtenemos el idTarea de la tarea y eliminamos ese documento de la coleccion firestore
-          db.collection("events")
-            .doc(this.events[i].idTarea)
-            .delete();
-          //this.events.splice(i, 1);
+          // Obtenemos el idTarea de la tarea y la eliminamos
+          console.log("eliminar dia");
+          console.log(data);
+          //Lo marcamos para no añadir
           aditar = false;
         }
       }
-
-      // Compruebo si ya se teletrabaja ese dia
-      let sum = 0;
-      let evento = {
-        title: this.usuario.displayName,
-        details: "Trabajo presencial en sede",
-        date: getCurrentDay(data.scope.timestamp.day),
-        //bgcolor: "blue-grey",
-        bgcolor:
-          "#" +
-          (
-            this.usuario.displayName
-              .split("")
-              .reduce((acc, next) => acc + next.charCodeAt(0) * 1000, 0) %
-            16777215
-          ).toString(16),
-
-        icon: "work"
-      };
+      // Si tenemos que aditar construyo el evento
       if (aditar) {
+        let evento = {
+          title: this.usuario.username,
+          details: "Trabajo presencial en sede",
+          date: data.scope.timestamp.date,
+          //bgcolor: "blue-grey",
+          bgcolor:
+            "#" +
+            (
+              this.usuario.username
+                .split("")
+                .reduce((acc, next) => acc + next.charCodeAt(0) * 1000, 0) %
+              16777215
+            ).toString(16),
+
+          icon: "work"
+        };
         this.agregarDia(evento);
       }
     },
@@ -227,16 +242,21 @@ export default {
       };
     },
     agregarDia: function(dia) {
-      // Al agregar la tarea, obtenemos el último ID Libre para darselo a la tarea desde Firebas
-      // Despues, añadimos la tarea en Firestore
-      db.collection("events")
-        .add({
-          dia
-          // Despues de añadir la tarea, la actualizamos añadiendo el id autogenerado por firestore
+      console.log(dia);
+      // Obtenemos del click los datos
+      let body = { dia: dia.date, usuario: this.usuario.id };
+      api
+        .post("/api/diapresencial/", body, {
+          headers: { "x-access-token": this.JWTToken }
         })
-        .then(function(docRef) {
-          docRef.update({ idTarea: docRef.id });
+        .then(response => {
+          this.data = response.data;
+          console.log(this.data);
+        })
+        .catch(error => {
+          console.log(error);
         });
+      this.obtendatos();
     },
     badgeStyles(event, type, timeStartPos, timeDurationHeight) {
       const s = {};
@@ -253,13 +273,14 @@ export default {
       s["align-items"] = "flex-start";
       return s;
     },
+    //Recorre cada dia del calendario para pintar los eventos
     getEvents(dt) {
       const currentDate = QCalendar.parseTimestamp(dt);
       const events = [];
       for (let i = 0; i < this.events.length; ++i) {
         let added = false;
-        if (this.events[i].dia.date === dt) {
-          if (this.events[i].dia.time) {
+        if (this.events[i].dia === dt) {
+          if (this.events[i].dia) {
             if (events.length > 0) {
               // check for overlapping times
               const startTime = QCalendar.parseTimestamp(
