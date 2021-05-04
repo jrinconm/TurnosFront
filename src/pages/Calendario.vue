@@ -52,6 +52,7 @@
 <!-- Aqui script, donde irá el Javascript (métodos, funciones, etc) -->
 <script>
 import QCalendar from "@quasar/quasar-ui-qcalendar"; // ui is aliased from '@quasar/quasar-ui-qcalendar'
+import { api } from "boot/axios";
 const CURRENT_DAY = new Date();
 
 function getCurrentDay(day) {
@@ -146,17 +147,29 @@ export default {
   },
   computed: {
     usuario: function() {
-      return "jrincon";
+      return "2";
     }
   },
   beforeMount() {
     // set "now" a hoy
     this.selectedDate = QCalendar.today();
-    this.now = QCalendar.parseTimestamp(this.selectedDate);
+    const now = QCalendar.parseTimestamp(this.selectedDate);
+    this.now = QCalendar.getDate(now);
   },
   methods: {
     calendarNext() {
       this.$refs.calendar.next();
+    },
+    obtendatos() {
+      api
+        .get("/api/diapresencial/name?usuario=" + this.usuario)
+        .then(response => {
+          this.data = response.data;
+          console.log(this.data);
+        })
+        .catch(error => {
+          console.log(error);
+        });
     },
     calendarPrev() {
       this.$refs.calendar.prev();
