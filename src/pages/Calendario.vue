@@ -11,7 +11,7 @@
       </q-toolbar>
     </div>
     <q-separator class="full-width" />
-    <div class="text-center q-mx-xl q-mt-sm" style="overflow: hidden;">
+    <div class="text-center q-mx-xl q-mt-sm vistacalendario">
       <q-calendar
         ref="calendar"
         v-model="selectedDate"
@@ -147,7 +147,7 @@ export default {
       events: [],
       usuario: {
         id: 2,
-        username: "Jose",
+        username: "Julian Rincon",
         email: "jose@email.com",
         password:
           "$2a$08$i/f3JtkdU.t.EoTDO.ETtOT740NRApssAl/xmbXVRb3eBbnuR.jcy",
@@ -180,7 +180,10 @@ export default {
         .then(response => {
           this.data = response.data;
           this.events.splice(0);
-          this.events = [...this.data];
+          this.data.forEach(element => {
+            this.events.push(this.generaevento(element.dia));
+            console.log(this.events);
+          });
         })
         .catch(error => {
           console.log(error);
@@ -189,6 +192,26 @@ export default {
     calendarPrev() {
       this.$refs.calendar.prev();
     },
+    generaevento(data) {
+      let evento = {
+        title: this.usuario.username,
+        details: "Trabajo presencial en sede",
+        date: data,
+        //bgcolor: "blue-grey",
+        bgcolor:
+          "#" +
+          (
+            this.usuario.username
+              .split("")
+              .reduce((acc, next) => acc + next.charCodeAt(0) * 1000, 0) %
+            16777215
+          ).toString(16),
+
+        icon: "work"
+      };
+      console.log(evento);
+      return evento;
+    },
     onClickDay2(data) {
       console.log(data.scope.timestamp.date);
       // Por defecto añado el dia
@@ -196,8 +219,8 @@ export default {
       // Recorro los eventos y miro si ya tengo marcado el dia
       for (let i = 0; i < this.events.length; ++i) {
         if (
-          this.events[i].dia.date == data.scope.timestamp.date &&
-          this.events[i].dia.title === this.usuario.username
+          this.events[i].date == data.scope.timestamp.date &&
+          this.events[i].title === this.usuario.username
         ) {
           // Obtenemos el idTarea de la tarea y la eliminamos
           console.log("eliminar dia");
@@ -208,22 +231,7 @@ export default {
       }
       // Si tenemos que aditar construyo el evento
       if (aditar) {
-        let evento = {
-          title: this.usuario.username,
-          details: "Trabajo presencial en sede",
-          date: data.scope.timestamp.date,
-          //bgcolor: "blue-grey",
-          bgcolor:
-            "#" +
-            (
-              this.usuario.username
-                .split("")
-                .reduce((acc, next) => acc + next.charCodeAt(0) * 1000, 0) %
-              16777215
-            ).toString(16),
-
-          icon: "work"
-        };
+        let evento = this.generaevento(data);
         this.agregarDia(evento);
       }
     },
@@ -279,15 +287,15 @@ export default {
       const events = [];
       for (let i = 0; i < this.events.length; ++i) {
         let added = false;
-        if (this.events[i].dia === dt) {
-          if (this.events[i].dia) {
+        if (this.events[i].date === dt) {
+          if (this.events[i].date) {
             if (events.length > 0) {
               // check for overlapping times
               const startTime = QCalendar.parseTimestamp(
-                this.events[i].dia.date + " " + this.events[i].dia.time
+                this.events[i].date + " " + this.events[i].time
               );
               const endTime = QCalendar.addToDate(startTime, {
-                minute: this.events[i].dia.duration
+                minute: this.events[i].duration
               });
               for (let j = 0; j < events.length; ++j) {
                 if (events[j].time) {
@@ -302,8 +310,8 @@ export default {
                     QCalendar.isBetweenDates(endTime, startTime2, endTime2)
                   ) {
                     events[j].side = "left";
-                    this.events[i].dia.side = "right";
-                    events.push(this.events[i].dia);
+                    this.events[i].side = "right";
+                    events.push(this.events[i]);
                     added = true;
                     break;
                   }
@@ -313,7 +321,7 @@ export default {
           }
           if (!added) {
             this.events[i].side = undefined;
-            events.push(this.events[i].dia);
+            events.push(this.events[i]);
           }
         } else if (this.events[i].days) {
           // check for overlapping dates
@@ -332,3 +340,8 @@ export default {
   }
 };
 </script>
+<style scoped>
+.vistacalendario {
+  background: black;
+}
+</style>
