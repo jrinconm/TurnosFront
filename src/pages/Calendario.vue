@@ -142,18 +142,7 @@ export default {
     return {
       selectedDate: "",
       now: "",
-      events: [],
-      usuario: {
-        id: 2,
-        username: "Julian Rincon",
-        email: "jose@email.com",
-        password:
-          "$2a$08$i/f3JtkdU.t.EoTDO.ETtOT740NRApssAl/xmbXVRb3eBbnuR.jcy",
-        createdAt: "2021-05-04T18:58:23.000Z",
-        updatedAt: "2021-05-04T18:58:23.000Z",
-        RolId: 2,
-        DepartamentoId: 2
-      }
+      events: []
     };
   },
   computed: {
@@ -182,7 +171,7 @@ export default {
     },
     obtendatos() {
       api
-        .get("/api/diapresencial/name?usuario=" + this.usuario.id, {
+        .get("/api/diapresencial/name?usuario=" + this.id, {
           headers: { "x-access-token": this.JWTToken }
         })
         .then(response => {
@@ -190,7 +179,6 @@ export default {
           this.events.splice(0);
           this.data.forEach(element => {
             this.events.push(this.generaevento(element.dia));
-            console.log(this.events);
           });
         })
         .catch(error => {
@@ -202,14 +190,14 @@ export default {
     },
     generaevento(data) {
       let evento = {
-        title: this.usuario.username,
+        title: this.username,
         details: "Trabajo presencial en sede",
         date: data,
         //bgcolor: "blue-grey",
         bgcolor:
           "#" +
           (
-            this.usuario.username
+            this.username
               .split("")
               .reduce((acc, next) => acc + next.charCodeAt(0) * 1000, 0) %
             16777215
@@ -217,18 +205,16 @@ export default {
 
         icon: "work"
       };
-      console.log(evento);
       return evento;
     },
     onClickDay2(data) {
-      console.log(data.scope.timestamp.date);
       // Por defecto añado el dia
       let aditar = true;
       // Recorro los eventos y miro si ya tengo marcado el dia
       for (let i = 0; i < this.events.length; ++i) {
         if (
           this.events[i].date == data.scope.timestamp.date &&
-          this.events[i].title === this.usuario.username
+          this.events[i].title === this.username
         ) {
           // Obtenemos el idTarea de la tarea y la eliminamos
           console.log("eliminar dia");
@@ -239,7 +225,7 @@ export default {
       }
       // Si tenemos que aditar construyo el evento
       if (aditar) {
-        let evento = this.generaevento(data);
+        let evento = this.generaevento(data.scope.timestamp.date);
         this.agregarDia(evento);
       }
     },
@@ -258,9 +244,8 @@ export default {
       };
     },
     agregarDia: function(dia) {
-      console.log(dia);
       // Obtenemos del click los datos
-      let body = { dia: dia.date, usuario: this.usuario.id };
+      let body = { dia: dia.date, usuario: this.id };
       api
         .post("/api/diapresencial/", body, {
           headers: { "x-access-token": this.JWTToken }
