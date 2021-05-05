@@ -60,7 +60,6 @@
 </template>
 
 <script>
-import { api } from "boot/axios";
 export default {
   name: "Login",
   data() {
@@ -72,16 +71,22 @@ export default {
   },
   methods: {
     login() {
+      //const { email, password } = this;
+      let body = { username: this.email, pass: this.password };
+      this.$store.dispatch("auth/AUTH_REQUEST", body).then(() => {
+        this.$router.push("/calendario");
+      });
+      /* 
       let body = { username: this.email, pass: this.password };
       api
         .post("/api/auth/signin", body)
         .then(response => {
-          this.data = response.data;
-          console.log(this.data);
+          api.defaults.headers.common["x-access-token"] =
+            response.data.accessToken;
         })
         .catch(error => {
           console.log(error);
-        });
+        });*/
     }
   }
 };

@@ -141,8 +141,6 @@ export default {
   data() {
     return {
       selectedDate: "",
-      JWTToken:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjIwMTU0MTM5LCJleHAiOjE2MjAyNDA1Mzl9.8A0lgXraLz1f3jANjKBKi2HyQ5o5hAHInNCMvOncw-I",
       now: "",
       events: [],
       usuario: {
@@ -158,7 +156,17 @@ export default {
       }
     };
   },
-  computed: {},
+  computed: {
+    JWTToken: function() {
+      return localStorage.getItem("user-token");
+    }, // store the token in localstorage
+    id: function() {
+      return localStorage.getItem("id");
+    }, // store the id in localstorage
+    username: function() {
+      return localStorage.getItem("username");
+    } // store the username in localstorage
+  },
   mounted() {
     this.obtendatos();
   },
