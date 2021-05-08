@@ -1,6 +1,5 @@
 <!-- Aqui template, donde ira el HTML que Vue renderizara -->
 <template>
-  <<<<<<< HEAD
   <div class="row">
     <div
       class="col-sm-4 col-xs-12 q-pa-sm q-mt-xl"
@@ -9,7 +8,6 @@
     >
       <editortablas v-bind:tabla="tabla"></editortablas>
     </div>
-    ======= >>>>>>> c89011453e761eb49a2374784f12ddcef0095be0
   </div>
 </template>
 <!-- Aqui script, donde irá el Javascript (métodos, funciones, etc) -->
@@ -17,7 +15,6 @@
 import editortablas from "../components/EditorTablas.vue";
 export default {
   name: "Administracion",
-<<<<<<< HEAD
   components: {
     editortablas
   },
@@ -32,4 +29,3 @@ export default {
   }
 };
 </script>
-======= >>>>>>> c89011453e761eb49a2374784f12ddcef0095be0

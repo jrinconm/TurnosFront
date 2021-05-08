@@ -2,7 +2,7 @@
 <template>
   <div class="text-center q-mt-xl q-mr-sm">
     <div class="row justify-center items-center">
-      <q-toolbar class="text-primary row justify-between items-center">
+      <q-toolbar class="text-primary row justify-between items-center q-ml-xl">
         <q-btn-group flat class="col-3">
           <q-btn dense flat label="Prev" @click="calendarPrev" />
           <q-separator vertical />
@@ -11,41 +11,46 @@
       </q-toolbar>
     </div>
     <q-separator class="full-width" />
-    <div class="text-center q-mx-xl q-mt-sm vistacalendario">
-      <q-calendar
-        ref="calendar"
-        v-model="selectedDate"
-        view="month"
-        locale="es-es"
-        :now="now"
-        animated
-        :weekdays="[1, 2, 3, 4, 5, 6, 0]"
-        :disabled-weekdays="[0, 6]"
-        transition-prev="slide-right"
-        transition-next="slide-left"
-        long-weekday-label
-        show-work-weeks
-        @click:day2="onClickDay2"
-        @click:workweek2="onClickWorkweek2"
-      >
-        <template #day="{ timestamp }">
-          <template v-for="(event, index) in getEvents(timestamp.date)">
-            <q-badge
-              :key="index"
-              style="width: 100%; cursor: pointer; height: 16px; max-height: 16px"
-              :class="badgeClasses(event, 'day')"
-              :style="badgeStyles(event, 'day')"
-            >
-              <q-icon
-                v-if="event.icon"
-                :name="event.icon"
-                class="q-mr-xs"
-              ></q-icon
-              ><span class="ellipsis">{{ event.title }}</span>
-            </q-badge>
-          </template>
-        </template>
-      </q-calendar>
+    <div class="row">
+      <div class="sm col-sm-1 q-pa-sm q-mt-xl"></div>
+      <div class="col-xs-12 col-sm-10 q-pa-sm q-mt-xl">
+        <div class="text-center q-mx-xl q-mt-sm vistacalendario">
+          <q-calendar
+            ref="calendar"
+            v-model="selectedDate"
+            view="month"
+            locale="es-es"
+            :now="now"
+            animated
+            :weekdays="[1, 2, 3, 4, 5, 6, 0]"
+            :disabled-weekdays="[0, 6]"
+            transition-prev="slide-right"
+            transition-next="slide-left"
+            long-weekday-label
+            show-work-weeks
+            @click:day2="onClickDay2"
+            @click:workweek2="onClickWorkweek2"
+          >
+            <template #day="{ timestamp }">
+              <template v-for="(event, index) in getEvents(timestamp.date)">
+                <q-badge
+                  :key="index"
+                  style="width: 100%; cursor: pointer; height: 16px; max-height: 16px"
+                  :class="badgeClasses(event, 'day')"
+                  :style="badgeStyles(event, 'day')"
+                >
+                  <q-icon
+                    v-if="event.icon"
+                    :name="event.icon"
+                    class="q-mr-xs"
+                  ></q-icon
+                  ><span class="ellipsis">{{ event.title }}</span>
+                </q-badge>
+              </template>
+            </template>
+          </q-calendar>
+        </div>
+      </div>
     </div>
   </div>
 </template>
