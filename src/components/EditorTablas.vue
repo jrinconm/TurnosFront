@@ -46,7 +46,12 @@
       <template v-slot:body="props">
         <q-tr :props="props">
           <q-td key="descripcion" :props="props">
-            {{ props.row.descripcion }}
+            <q-badge
+              outline
+              color="primary"
+              :label="props.row.descripcion"
+              class="q-ma-sm q-pa-sm"
+            />
             <q-popup-edit v-model="props.row.descripcion">
               <q-input
                 v-model="props.row.descripcion"
