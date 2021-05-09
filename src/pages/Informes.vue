@@ -1,13 +1,13 @@
 <!-- Aqui template, donde ira el HTML que Vue renderizara -->
 <template>
-  <div class="small">
-    <rosco :chart-data="appChart"></rosco>
+  <div class="donut">
+    <donut-component :datos="datos" :castellanoactivo="true" />
   </div>
 </template>
 <!-- Aqui script, donde irá el Javascript (métodos, funciones, etc) -->
 <script>
 import QCalendar from "@quasar/quasar-ui-qcalendar"; // ui is aliased from '@quasar/quasar-ui-qcalendar'
-import rosco from "../components/graficorosco.vue";
+import DonutComponent from "../components/DonutComponent.vue";
 /* const CURRENT_DAY = new Date();
 function getCurrentDay(day) {
   const newDay = new Date(CURRENT_DAY);
@@ -17,14 +17,15 @@ function getCurrentDay(day) {
 }*/
 export default {
   components: {
-    rosco
+    DonutComponent
   },
   name: "Informes",
   data() {
     return {
       selectedDate: "",
       now: "",
-      events: []
+      events: [],
+      datos: { presencial: 12, nopresencial: 30 }
     };
   },
   computed: {
@@ -75,7 +76,7 @@ export default {
         // Solo miro este mes
         if(element.dia.date.substring(5,7)===estemes){
           objeto.labels.push(element.dia.title);
-        }        
+        }
       });*/
       return objeto;
     }
