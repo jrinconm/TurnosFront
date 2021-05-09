@@ -32,6 +32,7 @@
     </div>
     <div class="q-ma-xl" style="width:90%;margin-left:8%">
       <q-icon-picker
+        @input="cambioicono()"
         v-model="value"
         tooltips
         font-size="25px"
@@ -59,6 +60,9 @@ export default {
   name: "SelectorIcono",
   components: {
     QIconPicker
+  },
+  props: {
+    icono: { required: true, type: String }
   },
   data() {
     return {
@@ -88,7 +92,11 @@ export default {
     } // store the username in localstorage
   },
   mounted() {},
-  methods: {}
+  methods: {
+    cambioicono() {
+      this.$emit("cambio-icono", this.value);
+    }
+  }
 };
 </script>
 <style src="@quasar/quasar-ui-qiconpicker/dist/index.css"></style>
