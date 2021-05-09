@@ -73,7 +73,7 @@ export default {
         "line-awesome",
         "material-icons" // optional, you are not bound to it
       ],
-      select: "",
+      select: "fontawesome-v5",
       value: "",
       filter: "",
       pagination: {}

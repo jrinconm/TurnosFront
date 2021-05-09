@@ -158,7 +158,7 @@ export default {
         .catch(error => {
           console.log(error);
         });
-      //this.obtendatos();
+      this.cargadatos();
     }
   }
 };
