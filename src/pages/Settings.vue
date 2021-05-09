@@ -1,42 +1,74 @@
-<!-- Aqui template, donde ira el HTML que Vue renderizara -->
 <template>
-  <div class="text-center q-pa-sm q-ma-xl">
+  <div class="text-center configuracion">
     <div class="row">
-      <q-card class="infoactual q-pa-sm q-ma-xl">
-        <q-card-section>
-          Color actual:
-          <q-badge color="info">
-            {{ secondcolor }}
-          </q-badge>
-        </q-card-section>
-        <q-card-section>
-          Icono actual <q-icon color="info" :name="icono"
-        /></q-card-section>
-      </q-card>
-      <div class="q-pa-sm q-mt-xl eligecolor">
-        <q-input
-          filled
-          readonly
-          v-model="secondcolor"
-          :rules="['anyColor']"
-          hint="Elige tu color"
-          class="my-input"
-        >
-          <template v-slot:append>
-            <q-icon name="colorize" class="cursor-pointer">
-              <q-popup-proxy transition-show="scale" transition-hide="scale">
-                <q-color @change="actualizacolor" v-model="secondcolor" />
-              </q-popup-proxy>
-            </q-icon>
-          </template>
-        </q-input>
+      <div class="col-md-4 col-xs-12">
+        <div class="row">
+          <div class="col-md-12">
+            <q-card class="infoactual">
+              <q-card-section>
+                Color actual:
+                <q-badge class="color" color="info">
+                  {{ secondcolor }}
+                </q-badge>
+              </q-card-section>
+              <q-card-section>
+                Icono actual <q-icon class="icono" color="info" :name="icono"
+              /></q-card-section>
+            </q-card>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="q-pa-sm q-mt-xl eligecolor">
+              <q-input
+                filled
+                readonly
+                v-model="secondcolor"
+                :rules="['anyColor']"
+                hint="Elige tu color"
+                class="my-input"
+              >
+                <template v-slot:append>
+                  <q-icon name="colorize" class="cursor-pointer">
+                    <q-popup-proxy
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-color @change="actualizacolor" v-model="secondcolor" />
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
+            </div>
+          </div>
+        </div>
+        <div class="row justify-start">
+          <q-btn
+            @click="actualizar"
+            :loading="submitting"
+            :disable="cambios"
+            label="Guardar cambios"
+            class="q-mt-md"
+            color="teal"
+          >
+            <template v-slot:loading>
+              <q-spinner-facebook />
+            </template>
+          </q-btn>
+        </div>
       </div>
-    </div>
-    <div class="q-pa-sm q-mt-xl">
-      <selector-icono
-        :icono="icono"
-        @cambio-icono="oncambioicono"
-      ></selector-icono>
+      <div class="col-md-8 col-xs-12">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="q-pa-sm q-mt-xl">
+              <selector-icono
+                :icono="icono"
+                @cambio-icono="oncambioicono"
+              ></selector-icono>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -57,7 +89,8 @@ export default {
       data: {},
       secondcolor: "",
       icono: "",
-      cambios: false
+      cambios: true,
+      submitting: false
     };
   },
   mounted() {
@@ -78,24 +111,26 @@ export default {
     oncambioicono(icono) {
       this.icono = icono;
       localStorage.setItem("icono", icono); // store the username in localstorage
+      this.cambios = false;
     },
     cambiacolor(color) {
       setBrand("info", color);
       this.secondcolor = color;
     },
     cargadatos: function() {
+      localStorage.getItem("color") &&
+        this.cambiacolor(localStorage.getItem("color"));
+      // store the id in localstorage
+      this.icono = localStorage.getItem("icono");
+      // store the username in localstorage
       api
         .get("/api/user/id?id=" + this.id, {
           headers: { "x-access-token": this.JWTToken }
         })
         .then(response => {
           this.data = response.data;
-          this.data.color
-            ? this.cambiacolor(this.data.color)
-            : this.cambiacolor("#027be3");
-          this.data.icono
-            ? (this.icono = this.data.icono)
-            : (this.icono = "work");
+          this.data.color && this.cambiacolor(this.data.color);
+          this.data.icono && (this.icono = this.data.icono);
         })
         .catch(error => {
           console.log(error);
@@ -104,23 +139,26 @@ export default {
     actualizacolor() {
       this.cambiacolor(this.secondcolor);
       localStorage.setItem("color", this.secondcolor); // store the username in localstorage
-      this.cambios = true;
+      this.cambios = false;
     },
     actualizar: function() {
+      this.submitting = true;
       // Obtenemos del click los datos
-      let body = { dia: dia.date, usuario: this.id };
+      let body = { color: this.color, icono: this.icono };
       api
-        .post("/api/diapresencial/", body, {
+        .put("/api/user/id?id=" + this.id, body, {
           headers: { "x-access-token": this.JWTToken }
         })
         .then(response => {
           this.data = response.data;
           console.log(this.data);
+          this.submitting = false;
+          this.cambios = true;
         })
         .catch(error => {
           console.log(error);
         });
-      this.obtendatos();
+      //this.obtendatos();
     }
   }
 };
@@ -128,14 +166,20 @@ export default {
 <style lang="sass" scoped>
 
 .infoactual, .eligecolor
-  width: 15vw
-  body.screen--xs &
-    color: #000
-  body.screen--sm &
-    color: #fff
+  padding: 2rem
+  margin: 2rem
+  font-size: 1rem
+  .icono
+    font-size: 3.5rem
+  .color
+    padding: 1rem
+.configuracion
+  margin: 2rem
 @media (max-width: $breakpoint-xs-max)
-  .infoactual
-    width: 100vw
-  .eligecolor
-    width: 100vw
+  .infoactual,.eligecolor
+    width: 90vw
+    padding: 0.5rem
+    margin: 0.5rem
+  .configuracion
+    margin: 1rem
 </style>

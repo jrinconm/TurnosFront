@@ -30,25 +30,24 @@
         style="width:200px"
       />
     </div>
-    <div class="q-ma-xl" style="width:90%;margin-left:8%">
-      <q-icon-picker
-        @input="cambioicono()"
-        v-model="value"
-        tooltips
-        font-size="25px"
-        color="grey-7"
-        selected-color="white"
-        pagination-color="red"
-        selected-background-color="blue-4"
-        :icon-set="select"
-        :filter="filter"
-        :pagination.sync="pagination"
-        style="height: 300px"
-      >
-        <!-- <template #icon="name">
-          <q-icon :name="name" size="lg" :title="name" />
-        </template> -->
-      </q-icon-picker>
+    <div class="row">
+      <div class="q-ma-xl" style="width:90%;margin-left:8%">
+        <q-icon-picker
+          @input="cambioicono()"
+          v-model="value"
+          tooltips
+          font-size="25px"
+          color="grey-7"
+          selected-color="white"
+          pagination-color="red"
+          selected-background-color="blue-4"
+          :icon-set="select"
+          :filter="filter"
+          :pagination.sync="pagination"
+          style="height: 300px"
+        >
+        </q-icon-picker>
+      </div>
     </div>
   </div>
 </template>
