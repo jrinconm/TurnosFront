@@ -77,6 +77,7 @@ export default {
   methods: {
     oncambioicono(icono) {
       this.icono = icono;
+      localStorage.setItem("icono", icono); // store the username in localstorage
     },
     cambiacolor(color) {
       setBrand("info", color);
@@ -102,6 +103,7 @@ export default {
     },
     actualizacolor() {
       this.cambiacolor(this.secondcolor);
+      localStorage.setItem("color", this.secondcolor); // store the username in localstorage
       this.cambios = true;
     },
     actualizar: function() {

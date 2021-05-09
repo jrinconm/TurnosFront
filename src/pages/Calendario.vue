@@ -158,9 +158,16 @@ export default {
     }, // store the id in localstorage
     username: function() {
       return localStorage.getItem("username");
+    }, // store the username in localstorage
+    color: function() {
+      return localStorage.getItem("color");
+    }, // store the id in localstorage
+    icono: function() {
+      return localStorage.getItem("icono");
     } // store the username in localstorage
   },
   mounted() {
+    this.obtenconfig();
     this.obtendatos();
   },
   beforeMount() {
@@ -172,6 +179,18 @@ export default {
   methods: {
     calendarNext() {
       this.$refs.calendar.next();
+    },
+    obtenconfig() {
+      api
+        .get("/api/user/id?id=" + this.id, {
+          headers: { "x-access-token": this.JWTToken }
+        })
+        .then(response => {
+          console.log(response.data);
+        })
+        .catch(error => {
+          console.log(error);
+        });
     },
     obtendatos() {
       api
@@ -197,17 +216,17 @@ export default {
         title: this.username,
         details: "Trabajo presencial en sede",
         date: data,
-        //bgcolor: "blue-grey",
-        bgcolor:
+        bgcolor: this.color,
+        /*bgcolor:
           "#" +
           (
             this.username
               .split("")
               .reduce((acc, next) => acc + next.charCodeAt(0) * 1000, 0) %
             16777215
-          ).toString(16),
+          ).toString(16), */
 
-        icon: "work"
+        icon: this.icono
       };
       return evento;
     },

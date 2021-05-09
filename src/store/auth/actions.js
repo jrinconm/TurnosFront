@@ -13,6 +13,8 @@ export function AUTH_REQUEST({ commit, dispatch }, user) {
         localStorage.setItem("user-token", resp.data.accessToken); // store the token in localstorage
         localStorage.setItem("id", resp.data.id); // store the id in localstorage
         localStorage.setItem("username", resp.data.username); // store the username in localstorage
+        localStorage.setItem("icono", resp.data.icono); // store the username in localstorage
+        localStorage.setItem("color", resp.data.color); // store the username in localstorage
         commit("AUTH_SUCCESS");
         // you have your token, now log in your user :)
         //dispatch("USER_REQUEST");
