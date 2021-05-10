@@ -148,7 +148,8 @@ export default {
       now: "",
       events: [],
       color: "",
-      icono: ""
+      icono: "",
+      usuario: ""
     };
   },
   computed: {
@@ -221,15 +222,6 @@ export default {
         details: "Trabajo presencial en sede",
         date: data,
         bgcolor: this.color,
-        /*bgcolor:
-          "#" +
-          (
-            this.username
-              .split("")
-              .reduce((acc, next) => acc + next.charCodeAt(0) * 1000, 0) %
-            16777215
-          ).toString(16), */
-
         icon: this.icono
       };
       return evento;
@@ -279,12 +271,11 @@ export default {
         })
         .then(response => {
           this.data = response.data;
-          console.log(this.data);
+          this.obtendatos();
         })
         .catch(error => {
           console.log(error);
         });
-      this.obtendatos();
     },
     badgeStyles(event, type, timeStartPos, timeDurationHeight) {
       const s = {};
