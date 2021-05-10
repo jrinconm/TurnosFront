@@ -65,13 +65,6 @@
       </q-card>
     </div>
   </div>
-  <!--
-  <div class="alta fixed-center text-center">
-    <h3>Cuenta nueva</h3>
-    <input type="text" v-model="email" placeholder="Correo" /><br />
-    <input type="password" v-model="password" placeholder="Contraseña" /><br />
-    <button @click="altaUsuario">Alta</button>
-  </div>-->
 </template>
 <!-- Aqui script, donde irá el Javascript (métodos, funciones, etc) -->
 <script>

@@ -328,7 +328,6 @@ export default {
           });
           if (QCalendar.isBetweenDates(currentDate, startDate, endDate)) {
             events.push(this.events[i].dia);
-            added = true;
           }
         }
       }

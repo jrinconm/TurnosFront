@@ -7,7 +7,6 @@
         <h5 class="text-h5 text-primary q-my-md">Turnos Teletrabajo</h5>
       </div>
       <div class="row">
-        <!-- <div class="col-12 col-xl-12"> -->
         <q-card square bordered class="bg-primary q-pa-lg shadow-1">
           <q-card-section>
             <q-form class="q-gutter-md">
