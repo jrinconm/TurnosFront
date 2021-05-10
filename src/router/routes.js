@@ -5,10 +5,7 @@ const routes = [
     children: [
       {
         path: "",
-        component: () => import("pages/Index.vue"),
-        meta: {
-          requiresAuth: true
-        }
+        redirect: "login"
       },
       {
         path: "calendario",
@@ -53,9 +50,18 @@ const routes = [
   },
   // Pagina de login
   {
-    path: "/login",
+    path: "/",
     component: () => import("layouts/LoginLayout"),
-    children: [{ path: "", component: () => import("pages/Login.vue") }]
+    children: [
+      {
+        path: "",
+        component: () => import("pages/Login.vue")
+      },
+      {
+        path: "login",
+        component: () => import("pages/Login.vue")
+      }
+    ]
   },
   // Always leave this as last one,
   // but you can also remove it
