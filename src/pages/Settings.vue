@@ -118,19 +118,20 @@ export default {
       this.secondcolor = color;
     },
     cargadatos: function() {
-      localStorage.getItem("color") &&
-        this.cambiacolor(localStorage.getItem("color"));
-      // store the id in localstorage
-      this.icono = localStorage.getItem("icono");
-      // store the username in localstorage
+      // Obtengo la configuracion del usuario
       api
         .get("/api/user/id?id=" + this.id, {
           headers: { "x-access-token": this.JWTToken }
         })
         .then(response => {
           this.data = response.data;
-          this.data.color && this.cambiacolor(this.data.color);
-          this.data.icono && (this.icono = this.data.icono);
+          // Cambio color e icono de la configuracion
+          this.data.color
+            ? this.cambiacolor(this.data.color)
+            : this.cambiacolor("#0026ff");
+          this.data.icono
+            ? (this.icono = this.data.icono)
+            : (this.icono = "work");
         })
         .catch(error => {
           console.log(error);
