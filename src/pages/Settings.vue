@@ -145,7 +145,7 @@ export default {
     actualizar: function() {
       this.submitting = true;
       // Obtenemos del click los datos
-      let body = { color: this.color, icono: this.icono };
+      let body = { color: this.secondcolor, icono: this.icono };
       api
         .put("/api/user/id?id=" + this.id, body, {
           headers: { "x-access-token": this.JWTToken }

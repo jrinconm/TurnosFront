@@ -146,7 +146,9 @@ export default {
     return {
       selectedDate: "",
       now: "",
-      events: []
+      events: [],
+      color: "",
+      icono: ""
     };
   },
   computed: {
@@ -158,12 +160,6 @@ export default {
     }, // store the id in localstorage
     username: function() {
       return localStorage.getItem("username");
-    }, // store the username in localstorage
-    color: function() {
-      return localStorage.getItem("color");
-    }, // store the id in localstorage
-    icono: function() {
-      return localStorage.getItem("icono");
     } // store the username in localstorage
   },
   mounted() {
@@ -181,12 +177,20 @@ export default {
       this.$refs.calendar.next();
     },
     obtenconfig() {
+      // Obtengo la configuracion del usuario
       api
         .get("/api/user/id?id=" + this.id, {
           headers: { "x-access-token": this.JWTToken }
         })
         .then(response => {
-          console.log(response.data);
+          this.data = response.data;
+          // Cambio color e icono de la configuracion
+          this.data.color
+            ? (this.color = this.data.color)
+            : (this.color = "#0026ff");
+          this.data.icono
+            ? (this.icono = this.data.icono)
+            : (this.icono = "work");
         })
         .catch(error => {
           console.log(error);
