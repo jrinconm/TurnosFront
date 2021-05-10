@@ -2,7 +2,12 @@
 <template>
   <div class="salida fixed-center text-center">
     <h3>Salir</h3>
-    <button @click="salidaUsuario">LOGOUT</button>
+    <q-btn
+      @click="salidaUsuario"
+      color="white"
+      text-color="black"
+      label="LOGOUT"
+    />
   </div>
 </template>
 <!-- Aqui script, donde irá el Javascript (métodos, funciones, etc) -->
@@ -14,8 +19,8 @@ export default {
   },
   methods: {
     salidaUsuario: function() {
-      this.$auth.signOut().then(() => {
-        this.$router.replace("/login");
+      this.$store.dispatch("auth/AUTH_LOGOUT").then(() => {
+        this.$router.push("/login");
       });
     }
   }

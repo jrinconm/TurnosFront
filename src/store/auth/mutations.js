@@ -11,3 +11,7 @@ export const AUTH_SUCCESS = state => {
 export const AUTH_ERROR = state => {
   state.status = "error";
 };
+
+export const AUTH_LOGOUT = state => {
+  state.status = "logout";
+};
