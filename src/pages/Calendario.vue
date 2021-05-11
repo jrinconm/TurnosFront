@@ -199,14 +199,18 @@ export default {
     },
     obtendatos() {
       api
-        .get("/api/diapresencial/name?usuario=" + this.id, {
+        // Obtengo todos los días del mismo departamento que del usuario
+        .get("/api/diapresencial/usuariodep?id=" + this.id, {
           headers: { "x-access-token": this.JWTToken }
         })
         .then(response => {
           this.data = response.data;
           this.events.splice(0);
           this.data.forEach(element => {
-            this.events.push(this.generaevento(element.dia));
+            // ES2020 Operador, babel ya se encargará de transpilarlo
+            element.Usuario.color ??= "#0026ff";
+            element.Usuario.icono ??= "work";
+            this.events.push(this.generaevento(element));
           });
         })
         .catch(error => {
@@ -216,13 +220,13 @@ export default {
     calendarPrev() {
       this.$refs.calendar.prev();
     },
-    generaevento(data) {
+    generaevento(consulta) {
       let evento = {
-        title: this.username,
+        title: consulta.Usuario.username,
         details: "Trabajo presencial en sede",
-        date: data,
-        bgcolor: this.color,
-        icon: this.icono
+        date: consulta.dia,
+        bgcolor: consulta.Usuario.color,
+        icon: consulta.Usuario.icono
       };
       return evento;
     },
@@ -244,7 +248,15 @@ export default {
       }
       // Si tenemos que aditar construyo el evento
       if (aditar) {
-        let evento = this.generaevento(data.scope.timestamp.date);
+        let consulta = {
+          dia: data.scope.timestamp.date,
+          Usuario: {
+            username: this.usuario,
+            color: this.color,
+            icon: this.icon
+          }
+        };
+        let evento = this.generaevento(consulta);
         this.agregarDia(evento);
       }
     },
