@@ -53,7 +53,6 @@
           </q-card-section>
         </q-card>
       </div>
-      <!-- </div> -->
     </div>
   </q-page>
 </template>
