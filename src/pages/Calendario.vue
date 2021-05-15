@@ -50,18 +50,7 @@ export default {
     },
     startPagination() {},
     hasPaginated() {},
-    async beforeDownload({ html2pdf, options, pdfContent }) {
-      //console.log(`On Before PDF Generation`);
-      // await html2pdf().set(options).from(pdfContent).toPdf().get('pdf').then((pdf) => {
-      // 	const totalPages = pdf.internal.getNumberOfPages()
-      // 	for (let i = 1; i <= totalPages; i++) {
-      // 		pdf.setPage(i)
-      // 		pdf.setFontSize(10)
-      // 		pdf.setTextColor(150)
-      // 		pdf.text('Page ' + i + ' of ' + totalPages, (pdf.internal.pageSize.getWidth() * 0.88), (pdf.internal.pageSize.getHeight() - 0.3))
-      // 	}
-      // }).save()
-    },
+    async beforeDownload({ html2pdf, options, pdfContent }) {},
     hasDownloaded(blobPdf) {
       this.pdfDownloaded = true;
       console.log(blobPdf);

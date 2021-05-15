@@ -231,6 +231,7 @@ export default {
     },
     generaevento(consulta) {
       let evento = {
+        id: consulta.id,
         title: consulta.Usuario.username,
         details: "Trabajo presencial en sede",
         date: consulta.dia,
@@ -240,34 +241,53 @@ export default {
       return evento;
     },
     onClickDay2(data) {
+      // Datos para los eventos
+      let consulta = {
+        dia: data.scope.timestamp.date,
+        Usuario: {
+          username: this.usuario,
+          color: this.color,
+          icon: this.icon
+        }
+      };
+      let evento = this.generaevento(consulta);
       // Por defecto añado el dia
       let aditar = true;
+      // Si es un dia en el pasado no dejo aditar
+      if (data.scope.timestamp.date < QCalendar.today()) {
+        alert("No puedes cambiar el pasado, mejora el futuro");
+        aditar = false;
+      }
       // Recorro los eventos y miro si ya tengo marcado el dia
       for (let i = 0; i < this.events.length; ++i) {
         if (
           this.events[i].date == data.scope.timestamp.date &&
           this.events[i].title === this.username
         ) {
-          // Obtenemos el idTarea de la tarea y la eliminamos
-          console.log("eliminar dia");
-          console.log(data);
+          this.eliminarDia(evento);
           //Lo marcamos para no añadir
           aditar = false;
         }
       }
       // Si tenemos que aditar construyo el evento
       if (aditar) {
-        let consulta = {
-          dia: data.scope.timestamp.date,
-          Usuario: {
-            username: this.usuario,
-            color: this.color,
-            icon: this.icon
-          }
-        };
-        let evento = this.generaevento(consulta);
         this.agregarDia(evento);
       }
+    },
+    eliminarDia(dia) {
+      let eventoBorrar = this.events.filter(x => x.date == dia.date);
+      api
+        .delete("/api/diapresencial/id?id=" + eventoBorrar[0].id, {
+          headers: { "x-access-token": this.JWTToken }
+        })
+        .then(response => {
+          this.data = response.data;
+          this.obtendatos();
+        })
+        .catch(error => {
+          console.log("Error");
+          console.log(error);
+        });
     },
     onClickWorkweek2(data) {},
     isCssColor(color) {
