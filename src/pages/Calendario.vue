@@ -21,7 +21,8 @@
             view="month"
             locale="es-es"
             animated
-            :weekdays="[1, 2, 3, 4, 5, 6, 0]"
+            :day-height="0"
+            :weekdays="[1, 2, 3, 4, 5]"
             :disabled-weekdays="[0, 6]"
             transition-prev="slide-right"
             transition-next="slide-left"
@@ -210,6 +211,10 @@ export default {
             // ES2020 Operador, babel ya se encargará de transpilarlo
             element.Usuario.color ??= "#0026ff";
             element.Usuario.icono ??= "work";
+            if (element.EstadoDiumId === 3) {
+              // Si el estado es 3, confirmado, dejo un 30% de transparencia
+              element.Usuario.color += "4D";
+            }
             this.events.push(this.generaevento(element));
           });
         })

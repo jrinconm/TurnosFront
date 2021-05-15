@@ -25,6 +25,7 @@
               <q-input
                 square
                 filled
+                @keyup.enter.prevent="login()"
                 v-model="password"
                 type="password"
                 label="contraseña"

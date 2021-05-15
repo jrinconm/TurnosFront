@@ -36,10 +36,6 @@ const routes = [
         }
       },
       {
-        path: "alta",
-        component: () => import("pages/Alta.vue")
-      },
-      {
         path: "salir",
         component: () => import("pages/Salir.vue"),
         meta: {
