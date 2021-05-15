@@ -253,10 +253,12 @@ export default {
       let evento = this.generaevento(consulta);
       // Por defecto añado el dia
       let aditar = true;
+      let eliminar = true;
       // Si es un dia en el pasado no dejo aditar
       if (data.scope.timestamp.date < QCalendar.today()) {
         alert("No puedes cambiar el pasado, mejora el futuro");
         aditar = false;
+        eliminar = false;
       }
       // Recorro los eventos y miro si ya tengo marcado el dia
       for (let i = 0; i < this.events.length; ++i) {
@@ -264,7 +266,7 @@ export default {
           this.events[i].date == data.scope.timestamp.date &&
           this.events[i].title === this.username
         ) {
-          this.eliminarDia(evento);
+          eliminar && this.eliminarDia(evento);
           //Lo marcamos para no añadir
           aditar = false;
         }
