@@ -34,7 +34,13 @@
                       transition-show="scale"
                       transition-hide="scale"
                     >
-                      <q-color @change="actualizacolor" v-model="secondcolor" />
+                      <q-color
+                        no-footer
+                        :palette="paleta"
+                        default-view="palette"
+                        @change="actualizacolor"
+                        v-model="secondcolor"
+                      />
                     </q-popup-proxy>
                   </q-icon>
                 </template>
@@ -77,6 +83,10 @@
 import { api } from "boot/axios";
 import { colors } from "quasar";
 const { setBrand } = colors;
+var removeItemFromArr = (arr, item) => {
+  var i = arr.indexOf(item);
+  i !== -1 && arr.splice(i, 1);
+};
 import SelectorIcono from "../components/SelectorIcono.vue";
 export default {
   name: "Config",
@@ -88,6 +98,7 @@ export default {
       color: "#FF00FF",
       data: {},
       secondcolor: "",
+      coloresusados: [],
       icono: "",
       cambios: true,
       submitting: false
@@ -95,6 +106,7 @@ export default {
   },
   mounted() {
     this.cargadatos();
+    this.obtencoloresusados();
   },
   computed: {
     JWTToken: function() {
@@ -105,7 +117,34 @@ export default {
     }, // store the id in localstorage
     username: function() {
       return localStorage.getItem("username");
-    } // store the username in localstorage
+    }, // store the username in localstorage
+    paleta: function() {
+      let paleta = [
+        "#f44336",
+        "#e81e63",
+        "#9c27b0",
+        "#673ab7",
+        "#3f51b5",
+        "#2196f3",
+        "#03a9f4",
+        "#00bcd4",
+        "#009688",
+        "#4caf50",
+        "#8bc34a",
+        "#cddc39",
+        "#ffeb3b",
+        "#ffc107",
+        "#ff9800",
+        "#ff5722",
+        "#795548",
+        "#9e9e9e",
+        "#607d8b"
+      ];
+      this.coloresusados.forEach(element => {
+        removeItemFromArr(paleta, element);
+      });
+      return paleta;
+    }
   },
   methods: {
     oncambioicono(icono) {
@@ -116,6 +155,22 @@ export default {
     cambiacolor(color) {
       setBrand("info", color);
       this.secondcolor = color;
+    },
+    obtencoloresusados() {
+      api
+        .get("/api/user/", {
+          headers: { "x-access-token": this.JWTToken }
+        })
+        .then(response => {
+          let respuesta = response.data;
+          this.coloresusados.splice(0);
+          respuesta.forEach(element => {
+            this.coloresusados.push(element.color);
+          });
+        })
+        .catch(error => {
+          console.log(error);
+        });
     },
     cargadatos: function() {
       // Obtengo la configuracion del usuario
@@ -136,6 +191,7 @@ export default {
         .catch(error => {
           console.log(error);
         });
+      this.obtencoloresusados();
     },
     actualizacolor() {
       this.cambiacolor(this.secondcolor);
@@ -152,7 +208,6 @@ export default {
         })
         .then(response => {
           this.data = response.data;
-          console.log(this.data);
           this.submitting = false;
           this.cambios = true;
         })

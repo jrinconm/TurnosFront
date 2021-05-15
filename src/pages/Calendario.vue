@@ -54,18 +54,10 @@
     </div>
   </div>
 </template>
-<!-- Aqui script, donde irá el Javascript (métodos, funciones, etc) -->
 <script>
 import QCalendar from "@quasar/quasar-ui-qcalendar"; // ui is aliased from '@quasar/quasar-ui-qcalendar'
 import { api } from "boot/axios";
-//const CURRENT_DAY = new Date();
 
-/*function getCurrentDay(day) {
-  const newDay = new Date(CURRENT_DAY);
-  newDay.setDate(day);
-  const tm = QCalendar.parseDate(newDay);
-  return tm.date;
-} */
 const reRGBA = /^\s*rgb(a)?\s*\((\s*(\d+)\s*,\s*?){2}(\d+)\s*,?\s*([01]?\.?\d*?)?\s*\)\s*$/;
 
 function removeItemFromArr(arr, item) {

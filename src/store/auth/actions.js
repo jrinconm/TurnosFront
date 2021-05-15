@@ -10,7 +10,9 @@ export function AUTH_REQUEST({ commit, dispatch }, user) {
     api
       .post("/api/auth/signin", user)
       .then(resp => {
+        console.log(resp.data);
         localStorage.setItem("user-token", resp.data.accessToken); // store the token in localstorage
+        localStorage.setItem("rol", resp.data.rol); // store the id in localstorage
         localStorage.setItem("id", resp.data.id); // store the id in localstorage
         localStorage.setItem("username", resp.data.username); // store the username in localstorage
         localStorage.setItem("icono", resp.data.icono); // store the username in localstorage

@@ -12,7 +12,7 @@
         />
 
         <q-toolbar-title>
-          Quasar App
+          Turnos Teletrabajo
         </q-toolbar-title>
       </q-toolbar>
     </q-header>

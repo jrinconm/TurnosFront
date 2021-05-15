@@ -7,7 +7,15 @@
       class="q-ma-md q-ml-xl"
     />
     <q-separator inset />
+    <q-item to="" exact>
+      <q-item-section avatar> </q-item-section>
 
+      <q-item-section>
+        {{ nombre }}
+      </q-item-section>
+    </q-item>
+
+    <q-separator inset />
     <q-item to="/calendario" exact>
       <q-item-section avatar>
         <q-icon name="calendar_today" />
@@ -18,7 +26,7 @@
       </q-item-section>
     </q-item>
 
-    <q-item to="/informes" exact>
+    <q-item to="/informes" exact v-if="rol > 1">
       <q-item-section avatar>
         <q-icon name="print" />
       </q-item-section>
@@ -38,7 +46,7 @@
       </q-item-section>
     </q-item>
 
-    <q-item to="/admin" exact>
+    <q-item to="/admin" exact v-if="rol > 2">
       <q-item-section avatar>
         <q-icon name="admin_panel_settings" />
       </q-item-section>
@@ -64,9 +72,16 @@ export default {
   name: "EnlacesLateral",
   data: function() {
     return {
-      photoUrl: null,
-      nombre: ""
+      photoUrl: null
     };
+  },
+  computed: {
+    rol: function() {
+      return localStorage.getItem("rol");
+    },
+    nombre: function() {
+      return localStorage.getItem("username");
+    } // store the token in localstorage
   }
 };
 </script>
