@@ -2,7 +2,7 @@
   <q-page
     class="gris window-height window-width row justify-center items-center"
   >
-    <div class="column">
+    <div class="column formulario">
       <div class="row">
         <h5 class="text-h5 text-primary q-my-md">Turnos Teletrabajo</h5>
       </div>
@@ -13,7 +13,6 @@
               <q-input
                 square
                 filled
-                clearable
                 v-model="email"
                 type="email"
                 label="usuario/email"
@@ -26,7 +25,6 @@
               <q-input
                 square
                 filled
-                clearable
                 v-model="password"
                 type="password"
                 label="contraseña"
@@ -34,9 +32,11 @@
               >
                 <template v-slot:prepend> <q-icon name="lock" /> </template
               ></q-input>
+              <p v-if="error" class="text-secondary error text-weight-bolder">
+                Email o contraseña errónea.
+              </p>
             </q-form>
           </q-card-section>
-          <p v-if="error" class="error">Email o contraseña errónea.</p>
           <q-card-actions class="q-px-md">
             <q-btn
               unelevated
@@ -47,10 +47,6 @@
               @click="login"
             />
           </q-card-actions>
-
-          <q-card-section class="text-center q-pa-none">
-            <p class="text-grey-6">Darse de alta</p>
-          </q-card-section>
         </q-card>
       </div>
     </div>
@@ -69,22 +65,15 @@ export default {
   },
   methods: {
     login() {
-      //const { email, password } = this;
       let body = { username: this.email, pass: this.password };
-      this.$store.dispatch("auth/AUTH_REQUEST", body).then(() => {
-        this.$router.push("/calendario");
-      });
-      /* 
-      let body = { username: this.email, pass: this.password };
-      api
-        .post("/api/auth/signin", body)
-        .then(response => {
-          api.defaults.headers.common["x-access-token"] =
-            response.data.accessToken;
+      this.$store
+        .dispatch("auth/AUTH_REQUEST", body)
+        .then(() => {
+          this.$router.push("/calendario");
         })
         .catch(error => {
-          console.log(error);
-        });*/
+          this.error = true;
+        });
     }
   }
 };
