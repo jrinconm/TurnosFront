@@ -66,7 +66,7 @@
               class="q-ma-sm"
               color="blue"
               label="Actualizar"
-              @click="editItem(props.row)"
+              @click="actualizar(props.row)"
               size="sm"
               no-caps
             ></q-btn>
@@ -176,6 +176,19 @@ export default {
       this.editedIndex = this.data.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.show_dialog = true;
+    },
+    actualizar(item) {
+      let body = { descripcion: item.descripcion };
+      api
+        .put("/api/" + this.tabla.tabla + "/id?id=" + item.id, body, {
+          headers: { "x-access-token": this.JWTToken }
+        })
+        .then(response => {
+          console.log(response.data);
+        })
+        .catch(error => {
+          console.log(error);
+        });
     },
     close() {
       this.show_dialog = false;

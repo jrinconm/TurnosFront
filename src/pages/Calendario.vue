@@ -12,22 +12,23 @@
       :manual-pagination="false"
       pdf-format="a4"
       pdf-orientation="landscape"
-      pdf-content-width="100%"
-      @progress="onProgress($event)"
-      @hasStartedGeneration="hasStartedGeneration()"
-      @hasGenerated="hasGenerated($event)"
+      pdf-content-width="90%"
       ref="html2Pdf"
     >
       <section slot="pdf-content">
         <calendariocomponent></calendariocomponent>
       </section>
     </vue-html2pdf>
-    <calendariocomponent @downloadPdf="downloadPdf()"></calendariocomponent>
+    <calendariocomponent
+      id="imprimir"
+      @downloadPdf="downloadPdf()"
+    ></calendariocomponent>
   </div>
 </template>
 
 <script>
 import VueHtml2pdf from "vue-html2pdf";
+//import * as html2pdf from "html2pdf.js";
 import calendariocomponent from "../components/Calendiariocomponent"; // ui is aliased from '@quasar/quasar-ui-qcalendar'
 export default {
   name: "Calendario",
@@ -43,22 +44,10 @@ export default {
   },
   methods: {
     async downloadPdf() {
+      //var element = document.getElementById("imprimir");
+      //html2pdf(element);
       this.$refs.html2Pdf.generatePdf();
-    },
-    onProgress(progress) {
-      this.progress = progress;
-    },
-    startPagination() {},
-    hasPaginated() {},
-    async beforeDownload({ html2pdf, options, pdfContent }) {},
-    hasDownloaded(blobPdf) {
-      this.pdfDownloaded = true;
-      console.log(blobPdf);
-    },
-    domRendered() {
-      this.contentRendered = true;
-    },
-    onBlobGenerate(blob) {}
+    }
   }
 };
 </script>
