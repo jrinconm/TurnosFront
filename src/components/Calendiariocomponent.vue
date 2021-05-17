@@ -9,6 +9,7 @@
           <q-btn dense flat label="Next" @click="calendarNext" />
         </q-btn-group>
         <q-btn
+          v-if="mostrarimprimir"
           padding="xs"
           class="q-mr-xl"
           align="between"
@@ -154,9 +155,11 @@ export default {
       events: [],
       color: "",
       icono: "",
-      usuario: ""
+      usuario: "",
+      mostrarimprimir: ""
     };
   },
+  props: { imprimir },
   computed: {
     JWTToken: function() {
       return localStorage.getItem("user-token");
@@ -169,6 +172,7 @@ export default {
     } // store the username in localstorage
   },
   mounted() {
+    this.mostrarimprimir = imprimir;
     this.obtenconfig();
     this.obtendatos();
   },

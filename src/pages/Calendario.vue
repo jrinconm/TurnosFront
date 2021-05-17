@@ -16,11 +16,11 @@
       ref="html2Pdf"
     >
       <section slot="pdf-content">
-        <calendariocomponent></calendariocomponent>
+        <calendariocomponent :imprimir="true"></calendariocomponent>
       </section>
     </vue-html2pdf>
     <calendariocomponent
-      id="imprimir"
+      :imprimir="false"
       @downloadPdf="downloadPdf()"
     ></calendariocomponent>
   </div>
@@ -44,8 +44,6 @@ export default {
   },
   methods: {
     async downloadPdf() {
-      //var element = document.getElementById("imprimir");
-      //html2pdf(element);
       this.$refs.html2Pdf.generatePdf();
     }
   }

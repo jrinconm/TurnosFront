@@ -8,6 +8,7 @@
 <script>
 import QCalendar from "@quasar/quasar-ui-qcalendar"; // ui is aliased from '@quasar/quasar-ui-qcalendar'
 import DonutComponent from "../components/DonutComponent.vue";
+import { api } from "boot/axios";
 /* const CURRENT_DAY = new Date();
 function getCurrentDay(day) {
   const newDay = new Date(CURRENT_DAY);
@@ -100,6 +101,31 @@ export default {
       });
       //this.datacollection = this.appChart;
       this.appChart = this.datacollection;*/
+    },
+    obtendatos() {
+      api
+        // Obtengo todos los días trabajados del usuario
+        // No obtengo solo el mes, porque no van a ser demasiados.
+        // Como mucho 365 al año!
+        .get("/api/diapresencial/name?usuario=" + this.id, {
+          headers: { "x-access-token": this.JWTToken }
+        })
+        .then(response => {
+          response.forEach(element => {
+            // ES2020 Operador, babel ya se encargará de transpilarlo
+            console.log(element);
+          });
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+    diasMes: function(timestamp) {
+      // Formato es YYYY-MM-DD
+      let year = timestamp.substring(0, 3);
+      let month = timestamp.substring(5, 6);
+      let dias = QCalendar.daysInMonth(year, month);
+      return dias;
     }
   },
   mounted() {
