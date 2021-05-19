@@ -8,19 +8,26 @@
           <q-separator vertical />
           <q-btn dense flat label="Next" @click="calendarNext" />
         </q-btn-group>
-        <q-btn
-          v-if="mostrarimprimir"
-          padding="xs"
-          class="q-mr-xl"
-          align="between"
-          size="xs"
-          dark-percentage
-          color="white"
-          text-color="grey-9"
-          @click="$emit('downloadPdf')"
-        >
-          <q-icon name="print" class="text-teal" style="font-size: 4.4em;" />
-        </q-btn>
+        <div v-show="imprimir">
+          <q-btn
+            v-if="imprimir"
+            padding="xs"
+            class="q-mr-xl"
+            align="between"
+            size="xs"
+            dark-percentage
+            color="white"
+            text-color="grey-9"
+            @click="$emit('downloadPdf')"
+          >
+            <q-icon
+              v-if="imprimir"
+              name="print"
+              class="text-teal"
+              style="font-size: 4.4em;"
+            />
+          </q-btn>
+        </div>
       </q-toolbar>
     </div>
     <q-separator class="full-width" />
@@ -159,7 +166,7 @@ export default {
       mostrarimprimir: ""
     };
   },
-  props: { imprimir },
+  props: ["imprimir"],
   computed: {
     JWTToken: function() {
       return localStorage.getItem("user-token");
@@ -172,7 +179,7 @@ export default {
     } // store the username in localstorage
   },
   mounted() {
-    this.mostrarimprimir = imprimir;
+    //this.mostrarimprimir = imprimir;
     this.obtenconfig();
     this.obtendatos();
   },

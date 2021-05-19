@@ -16,11 +16,11 @@
       ref="html2Pdf"
     >
       <section slot="pdf-content">
-        <calendariocomponent :imprimir="true"></calendariocomponent>
+        <calendariocomponent imprimir="false"></calendariocomponent>
       </section>
     </vue-html2pdf>
     <calendariocomponent
-      :imprimir="false"
+      imprimir="true"
       @downloadPdf="downloadPdf()"
     ></calendariocomponent>
   </div>
