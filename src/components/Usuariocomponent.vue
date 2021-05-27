@@ -181,11 +181,11 @@ export default {
           sortable: true
         },
         {
-          name: "DepartamentoId",
+          name: "departamento",
           required: true,
           label: "Departamento",
           align: "left",
-          field: row => row.DepartamentoId,
+          field: row => row.departamento,
           format: val => `${val}`,
           sortable: true
         },

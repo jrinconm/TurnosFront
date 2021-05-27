@@ -29,10 +29,7 @@ export default {
   },
   data() {
     return {
-      datos: [
-        { nombre: "Departamentos", tabla: "departamento" },
-        { nombre: "Estados", tabla: "estadodia" }
-      ]
+      datos: [{ nombre: "Estados", tabla: "estadodia" }]
     };
   }
 };
