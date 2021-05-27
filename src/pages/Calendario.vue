@@ -28,7 +28,17 @@ export default {
   methods: {
     downloadPdf() {
       var element = document.getElementById("calendario");
-      html2pdf(element);
+      var opt = {
+        margin: 1,
+        filename: "calendario.pdf",
+        image: { type: "jpeg", quality: 0.98 },
+        jsPDF: { orientation: "landscape" }
+      };
+      html2pdf()
+        .set(opt)
+        .from(element)
+        .save();
+      //html2pdf(element, opt);
       //this.$refs.html2Pdf.generatePdf();
     }
   }
