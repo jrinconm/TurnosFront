@@ -26,7 +26,7 @@
       </q-item-section>
     </q-item>
 
-    <q-item to="/informes" exact v-if="rol > 1">
+    <q-item to="/informes" exact v-if="rol === 'gestor' || rol === 'admin'">
       <q-item-section avatar>
         <q-icon name="print" />
       </q-item-section>
@@ -46,7 +46,7 @@
       </q-item-section>
     </q-item>
 
-    <q-item to="/admin" exact v-if="rol > 2">
+    <q-item to="/admin" exact v-if="rol === 'admin'">
       <q-item-section avatar>
         <q-icon name="admin_panel_settings" />
       </q-item-section>
