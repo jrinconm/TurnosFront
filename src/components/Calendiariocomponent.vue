@@ -42,7 +42,7 @@
             locale="es-es"
             animated
             :day-height="0"
-            :weekdays="[1, 2, 3, 4, 5]"
+            :weekdays="[1, 2, 3, 4, 5, 6, 0]"
             :disabled-weekdays="[0, 6]"
             transition-prev="slide-right"
             transition-next="slide-left"
@@ -153,6 +153,7 @@ function luminosity(color) {
     B = b <= 0.03928 ? b / 12.92 : Math.pow((b + 0.055) / 1.055, 2.4);
   return 0.2126 * R + 0.7152 * G + 0.0722 * B;
 }
+
 export default {
   name: "calendario-component",
   data() {
@@ -226,10 +227,14 @@ export default {
             // ES2020 Operador, babel ya se encargará de transpilarlo
             element.Usuario.color ??= "#0026ff";
             element.Usuario.icono ??= "work";
-            if (element.EstadoDiumId === 3) {
-              // Si el estado es 3, confirmado, dejo un 30% de transparencia
-              element.Usuario.color += "4D";
-            }
+            /*
+            // Compruebo la luminosidad
+            console.log(luminosity(element.Usuario.color));
+            // Si el estado es 1, confirmado, dejo un 30% de transparencia
+            element.EstadoDiumId === 1 && (element.Usuario.color += "4D");
+            // Si el estado es 3, confirmado, dejo un 30% de transparencia
+            element.EstadoDiumId === 3 && (element.Usuario.color += "4D");
+            */
             this.events.push(this.generaevento(element));
           });
         })
@@ -242,12 +247,12 @@ export default {
     },
     generaevento(consulta) {
       let evento = {
-        id: consulta.id,
         title: consulta.Usuario.username,
         details: "Trabajo presencial en sede",
         date: consulta.dia,
         bgcolor: consulta.Usuario.color,
-        icon: consulta.Usuario.icono
+        icon: consulta.Usuario.icono,
+        estado: consulta.EstadoDiumId
       };
       return evento;
     },
@@ -313,7 +318,9 @@ export default {
         [`text-white bg-${event.bgcolor}`]: !cssColor,
         "full-width": !isHeader && (!event.side || event.side === "full"),
         "left-side": !isHeader && event.side === "left",
-        "right-side": !isHeader && event.side === "right"
+        "right-side": !isHeader && event.side === "right",
+        parpadea: !isHeader && event.estado !== 2,
+        cambiando: !isHeader && event.estado === 3
       };
     },
     agregarDia: function(dia) {
@@ -407,5 +414,14 @@ export default {
 <style scoped>
 .vistacalendario {
   background: black;
+}
+.parpadea {
+  animation: parpadear 1s linear infinite;
+}
+
+@keyframes parpadear {
+  50% {
+    opacity: 0;
+  }
 }
 </style>

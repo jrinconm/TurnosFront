@@ -22,8 +22,7 @@ export default {
     return {
       datos: [
         { nombre: "Departamentos", tabla: "departamento" },
-        { nombre: "Estados", tabla: "estadodia" },
-        { nombre: "Roles", tabla: "rol" }
+        { nombre: "Estados", tabla: "estadodia" }
       ]
     };
   }
