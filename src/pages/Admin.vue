@@ -8,15 +8,20 @@
     >
       <editortablas v-bind:tabla="tabla"></editortablas>
     </div>
+    <div class="col-sm-11 col-xs-12 q-pa-sm q-ma-xl">
+      <gestorusuario></gestorusuario>
+    </div>
   </div>
 </template>
 <!-- Aqui script, donde irá el Javascript (métodos, funciones, etc) -->
 <script>
 import editortablas from "../components/EditorTablas.vue";
+import gestorusuario from "../components/Usuariocomponent.vue";
 export default {
   name: "Administracion",
   components: {
-    editortablas
+    editortablas,
+    gestorusuario
   },
   data() {
     return {

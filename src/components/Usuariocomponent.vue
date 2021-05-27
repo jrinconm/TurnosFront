@@ -2,7 +2,7 @@
 <template>
   <div class="q-pa-md">
     <q-table
-      :title="tabla.nombre"
+      title="Gestion de usuarios"
       :data="data"
       row-key="name"
       binary-state-sort
@@ -45,24 +45,19 @@
       </template>
       <template v-slot:body="props">
         <q-tr :props="props">
-          <q-td key="id" :props="props">
-            <q-badge color="white" text-color="black" :label="props.row.id" />
-          </q-td>
-          <q-td key="descripcion" :props="props">
-            <q-badge
-              outline
-              color="primary"
-              :label="props.row.descripcion"
-              class="q-ma-sm q-pa-sm"
-            />
-            <q-popup-edit v-model="props.row.descripcion">
+          <q-td v-for="(column, key) in columnas" v-bind:key="key">
+            <q-popup-edit
+              v-if="column.name != 'id'"
+              v-model="props.row[column.name]"
+            >
               <q-input
-                v-model="props.row.descripcion"
+                v-model="props.row[column.name]"
                 dense
                 autofocus
                 counter
               />
             </q-popup-edit>
+            {{ props.row[column.name] }}
           </q-td>
           <q-td key="actions" :props="props">
             <q-btn
@@ -90,8 +85,7 @@
 <script>
 import { api } from "boot/axios";
 export default {
-  name: "editortablas",
-  props: ["tabla"],
+  name: "gestorusuario",
   data() {
     return {
       data: [],
@@ -115,11 +109,20 @@ export default {
           sortable: true
         },
         {
-          name: "descripcion",
+          name: "username",
           required: true,
-          label: "DESCRIPCIÓN",
+          label: "username",
           align: "left",
-          field: row => row.name,
+          field: row => row.username,
+          format: val => `${val}`,
+          sortable: true
+        },
+        {
+          name: "rol",
+          required: true,
+          label: "rol",
+          align: "left",
+          field: row => row.rol,
           format: val => `${val}`,
           sortable: true
         },
@@ -140,7 +143,12 @@ export default {
     }, // store the id in localstorage
     username: function() {
       return localStorage.getItem("username");
-    } // store the username in localstorage
+    }, // store the username in localstorage
+    columnas: function() {
+      let nuevascol = [...this.columns];
+      nuevascol.pop();
+      return nuevascol;
+    }
   },
   mounted() {
     this.obtendatos();
@@ -148,7 +156,7 @@ export default {
   methods: {
     obtendatos() {
       api
-        .get("/api/" + this.tabla.tabla + "/", {
+        .get("/api/user/", {
           headers: { "x-access-token": this.JWTToken }
         })
         .then(response => {
@@ -173,7 +181,7 @@ export default {
     },
     borraDatoTabla(id) {
       api
-        .delete("/api/" + this.tabla.tabla + "/id?id=" + id, {
+        .delete("/api/user/id?id=" + id, {
           headers: { "x-access-token": this.JWTToken }
         })
         .then(response => {
@@ -190,16 +198,23 @@ export default {
       this.show_dialog = true;
     },
     actualizar(item) {
-      let body = { descripcion: item.descripcion };
+      let body = { rol: item.rol, username: item.username };
       api
-        .put("/api/" + this.tabla.tabla + "/id?id=" + item.id, body, {
+        .put("/api/user/id?id=" + item.id, body, {
           headers: { "x-access-token": this.JWTToken }
         })
         .then(response => {
+          this.$q.notify({
+            type: "positive",
+            message: response.data.message
+          });
           console.log(response.data);
         })
         .catch(error => {
-          console.log(error);
+          this.$q.notify({
+            type: "negative",
+            message: error
+          });
         });
     },
     close() {
