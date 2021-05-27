@@ -26,7 +26,15 @@
 
               <q-card-section>
                 <div class="row">
-                  <q-input v-model="editedItem.name" label="Nombre"></q-input>
+                  <q-input
+                    v-model="editedItem.username"
+                    label="Usuario"
+                  ></q-input>
+                </div>
+              </q-card-section>
+              <q-card-section>
+                <div class="row">
+                  <q-input v-model="editedItem.email" label="Correo"></q-input>
                 </div>
               </q-card-section>
 
@@ -122,10 +130,14 @@ export default {
       show_dialog: false,
       editedIndex: -1,
       editedItem: {
-        name: ""
+        username: "",
+        email: "",
+        rol: "base"
       },
       defaultItem: {
-        name: ""
+        username: "",
+        email: "",
+        rol: "base"
       },
       errorRol: false,
       errorMessageRol: "",
@@ -164,6 +176,15 @@ export default {
           label: "Rol",
           align: "left",
           field: row => row.rol,
+          format: val => `${val}`,
+          sortable: true
+        },
+        {
+          name: "DepartamentoId",
+          required: true,
+          label: "Departamento",
+          align: "left",
+          field: row => row.DepartamentoId,
           format: val => `${val}`,
           sortable: true
         },
@@ -214,7 +235,7 @@ export default {
   },
   methods: {
     compruebarol(val) {
-      if (val !== "base" || val !== "admin" || val !== "gestor") {
+      if (val != "base" && val != "admin" && val != "gestor") {
         this.errorRol = true;
         this.errorMessageRol = "Rol debe ser base, gestor o admin!";
         return false;
@@ -239,7 +260,33 @@ export default {
       if (this.editedIndex > -1) {
         Object.assign(this.data[this.editedIndex], this.editedItem);
       } else {
-        this.data.push(this.editedItem);
+        let body = {
+          rol: this.editedItem.rol,
+          username: this.editedItem.username,
+          email: this.editedItem.email
+        };
+        api
+          .put("/api/user/", body, {
+            headers: { "x-access-token": this.JWTToken }
+          })
+          .then(response => {
+            this.$q.notify({
+              type: "positive",
+              position: "top",
+              message: response.data.message
+            });
+            console.log(response.data);
+          })
+          .catch(error => {
+            this.$q.notify({
+              type: "negative",
+              position: "top",
+              message: error
+            });
+          });
+
+        console.log(body);
+        //this.data.push(this.editedItem);
       }
       this.close();
     },
@@ -282,9 +329,51 @@ export default {
       this.editedItem = Object.assign({}, item);
       this.show_dialog = true;
     },
-    resetpass(item) {},
+    resetpass(item) {
+      let id = item.id;
+      this.$q
+        .dialog({
+          title: "Reset contraseña",
+          message: "Introduzca nueva contraseña",
+          prompt: {
+            model: "",
+            isValid: val => val.length > 3, // << here is the magic
+            type: "text" // optional
+          },
+          cancel: true,
+          persistent: true
+        })
+        .onOk(data => {
+          this.actualizacampo(id, { password: data });
+        });
+    },
+    actualizacampo(id, campo) {
+      api
+        .put("/api/user/id?id=" + id, campo, {
+          headers: { "x-access-token": this.JWTToken }
+        })
+        .then(response => {
+          this.$q.notify({
+            type: "positive",
+            position: "top",
+            message: response.data.message
+          });
+          console.log(response.data);
+        })
+        .catch(error => {
+          this.$q.notify({
+            type: "negative",
+            position: "top",
+            message: error
+          });
+        });
+    },
     actualizar(item) {
-      let body = { rol: item.rol, username: item.username, email: item.email };
+      let body = { ...item };
+      // Elimino lo que no necesito
+      delete body.id;
+      delete body.createdAt;
+      delete body.updatedAt;
       api
         .put("/api/user/id?id=" + item.id, body, {
           headers: { "x-access-token": this.JWTToken }
