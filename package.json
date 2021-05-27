@@ -12,11 +12,13 @@
   "dependencies": {
     "@quasar/extras": "^1.0.0",
     "@quasar/quasar-ui-qcalendar": "^3.3.5",
+    "apexcharts": "^3.26.3",
     "axios": "^0.21.1",
     "chart.js": "^2.9.4",
     "core-js": "^3.6.5",
     "html2pdf.js": "^0.9.3",
     "quasar": "^1.0.0",
+    "vue-apexcharts": "^1.6.1",
     "vue-chartjs": "^3.5.1",
     "vue-html2pdf": "^1.8.0",
     "vue-i18n": "^8.0.0"

@@ -2,6 +2,20 @@
 <template>
   <div class="donut">
     <donut-component :datos="datos" :castellanoactivo="true" />
+    <div>
+      <apexchart
+        width="500"
+        type="bar"
+        :options="options"
+        :series="series"
+      ></apexchart>
+      <apexchart
+        width="380"
+        type="donut"
+        :options="options2"
+        :series="series2"
+      ></apexchart>
+    </div>
   </div>
 </template>
 <!-- Aqui script, donde irá el Javascript (métodos, funciones, etc) -->
@@ -9,6 +23,11 @@
 import QCalendar from "@quasar/quasar-ui-qcalendar"; // ui is aliased from '@quasar/quasar-ui-qcalendar'
 import DonutComponent from "../components/DonutComponent.vue";
 import { api } from "boot/axios";
+import Vue from "vue";
+import VueApexCharts from "vue-apexcharts";
+
+Vue.use(VueApexCharts);
+Vue.component("apexchart", VueApexCharts);
 /* const CURRENT_DAY = new Date();
 function getCurrentDay(day) {
   const newDay = new Date(CURRENT_DAY);
@@ -26,7 +45,23 @@ export default {
       selectedDate: "",
       now: "",
       events: [],
-      datos: { presencial: 12, nopresencial: 30 }
+      datos: { presencial: 12, nopresencial: 30 },
+      options2: {},
+      series2: [44, 55, 41, 17, 15],
+      options: {
+        chart: {
+          id: "vuechart-example"
+        },
+        xaxis: {
+          categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998]
+        }
+      },
+      series: [
+        {
+          name: "series-1",
+          data: [30, 40, 45, 50, 49, 60, 70, 91]
+        }
+      ]
     };
   },
   computed: {

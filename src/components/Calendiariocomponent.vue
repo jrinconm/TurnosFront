@@ -243,14 +243,6 @@ export default {
             // ES2020 Operador, babel ya se encargará de transpilarlo
             element.Usuario.color ??= "#0026ff";
             element.Usuario.icono ??= "work";
-            /*
-            // Compruebo la luminosidad
-            console.log(luminosity(element.Usuario.color));
-            // Si el estado es 1, confirmado, dejo un 30% de transparencia
-            element.EstadoDiumId === 1 && (element.Usuario.color += "4D");
-            // Si el estado es 3, confirmado, dejo un 30% de transparencia
-            element.EstadoDiumId === 3 && (element.Usuario.color += "4D");
-            */
             this.events.push(this.generaevento(element));
           });
         })
@@ -335,8 +327,6 @@ export default {
         "full-width": !isHeader && (!event.side || event.side === "full"),
         "left-side": !isHeader && event.side === "left",
         "right-side": !isHeader && event.side === "right"
-        //parpadea: !isHeader && event.estado !== 2,
-        //cambiando: !isHeader && event.estado === 3
       };
     },
     agregarDia: function(dia) {
