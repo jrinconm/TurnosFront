@@ -1,6 +1,6 @@
 <!-- Aqui template, donde ira el HTML que Vue renderizara -->
 <template>
-  <div class="q-pa-md">
+  <div class="q-ma-md-xl">
     <q-table
       :title="tabla.nombre"
       :data="data"

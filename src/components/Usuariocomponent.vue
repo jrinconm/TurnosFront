@@ -1,6 +1,6 @@
 <!-- Aqui template, donde ira el HTML que Vue renderizara -->
 <template>
-  <div class="q-pa-md">
+  <div class="">
     <q-table
       title="Gestion de usuarios"
       :data="data"
@@ -47,21 +47,42 @@
         <q-tr :props="props">
           <q-td v-for="(column, key) in columnas" v-bind:key="key">
             <q-popup-edit
-              v-if="column.name != 'id'"
+              v-if="column.name != 'id' && column.name != 'rol'"
               v-model="props.row[column.name]"
+            >
+              <q-input v-model="props.row[column.name]" dense autofocus counter>
+                <template v-slot:append>
+                  <q-icon name="edit" />
+                </template>
+              </q-input>
+            </q-popup-edit>
+            <q-popup-edit
+              v-if="column.name === 'rol'"
+              v-model="props.row[column.name]"
+              :validate="compruebarol"
+              @hide="compruebarol"
+              buttons
+              label-set="Aceptar"
+              label-cancel="Cancelar"
             >
               <q-input
                 v-model="props.row[column.name]"
                 dense
                 autofocus
                 counter
-              />
+                :error="errorRol"
+                :error-message="errorMessageRol"
+              >
+                <template v-slot:append>
+                  <q-icon name="edit" />
+                </template>
+              </q-input>
             </q-popup-edit>
             {{ props.row[column.name] }}
           </q-td>
           <q-td key="actions" :props="props">
             <q-btn
-              class="q-ma-sm"
+              class="q-ma-xs"
               color="blue"
               label="Actualizar"
               @click="actualizar(props.row)"
@@ -69,9 +90,18 @@
               no-caps
             ></q-btn>
             <q-btn
+              class="q-ma-xs"
               color="red"
               label="Borrar"
               @click="deleteItem(props.row)"
+              size="sm"
+              no-caps
+            ></q-btn>
+            <q-btn
+              class="q-ma-xs"
+              color="green"
+              label="Reset password"
+              @click="resetpass(props.row)"
               size="sm"
               no-caps
             ></q-btn>
@@ -97,6 +127,8 @@ export default {
       defaultItem: {
         name: ""
       },
+      errorRol: false,
+      errorMessageRol: "",
       //visibleColumns: ["descripcion", "actions"],
       columns: [
         {
@@ -111,18 +143,45 @@ export default {
         {
           name: "username",
           required: true,
-          label: "username",
+          label: "Username",
           align: "left",
           field: row => row.username,
           format: val => `${val}`,
           sortable: true
         },
         {
+          name: "email",
+          required: true,
+          label: "Email",
+          align: "left",
+          field: row => row.email,
+          format: val => `${val}`,
+          sortable: true
+        },
+        {
           name: "rol",
           required: true,
-          label: "rol",
+          label: "Rol",
           align: "left",
           field: row => row.rol,
+          format: val => `${val}`,
+          sortable: true
+        },
+        {
+          name: "icono",
+          required: true,
+          label: "Icono",
+          align: "left",
+          field: row => row.icono,
+          format: val => `${val}`,
+          sortable: true
+        },
+        {
+          name: "color",
+          required: true,
+          label: "Color",
+          align: "left",
+          field: row => row.color,
           format: val => `${val}`,
           sortable: true
         },
@@ -154,6 +213,16 @@ export default {
     this.obtendatos();
   },
   methods: {
+    compruebarol(val) {
+      if (val !== "base" || val !== "admin" || val !== "gestor") {
+        this.errorRol = true;
+        this.errorMessageRol = "Rol debe ser base, gestor o admin!";
+        return false;
+      }
+      this.errorRol = false;
+      this.errorMessageRol = "";
+      return true;
+    },
     obtendatos() {
       api
         .get("/api/user/", {
@@ -176,8 +245,24 @@ export default {
     },
     deleteItem(item) {
       const id = item.id;
-      confirm("Are you sure you want to delete this item?") &&
+      this.confirm("Seguro que quieres borrar esta linea?") &&
+        //confirm("Are you sure you want to delete this item?") &&
         this.borraDatoTabla(id);
+    },
+    confirm(texto) {
+      this.$q
+        .dialog({
+          title: "Confirm",
+          message: texto,
+          cancel: true,
+          persistent: true
+        })
+        .onOk(() => {
+          return true;
+        })
+        .onCancel(() => {
+          return false;
+        });
     },
     borraDatoTabla(id) {
       api
@@ -197,8 +282,9 @@ export default {
       this.editedItem = Object.assign({}, item);
       this.show_dialog = true;
     },
+    resetpass(item) {},
     actualizar(item) {
-      let body = { rol: item.rol, username: item.username };
+      let body = { rol: item.rol, username: item.username, email: item.email };
       api
         .put("/api/user/id?id=" + item.id, body, {
           headers: { "x-access-token": this.JWTToken }
@@ -206,6 +292,7 @@ export default {
         .then(response => {
           this.$q.notify({
             type: "positive",
+            position: "top",
             message: response.data.message
           });
           console.log(response.data);
@@ -213,6 +300,7 @@ export default {
         .catch(error => {
           this.$q.notify({
             type: "negative",
+            position: "top",
             message: error
           });
         });

@@ -1,15 +1,19 @@
 <!-- Aqui template, donde ira el HTML que Vue renderizara -->
 <template>
-  <div class="row">
-    <div
-      class="col-sm-4 col-xs-12 q-pa-sm q-mt-xl"
-      v-for="(tabla, key) in datos"
-      v-bind:key="key"
-    >
-      <editortablas v-bind:tabla="tabla"></editortablas>
+  <div>
+    <div class="row q-pa-sm q-ma-md-xl q-pa-md-xl">
+      <div class="col-sm-8 col-xs-12">
+        <gestorusuario></gestorusuario>
+      </div>
     </div>
-    <div class="col-sm-11 col-xs-12 q-pa-sm q-ma-xl">
-      <gestorusuario></gestorusuario>
+    <div class="row q-pa-md-xl q-ma-md-xl ">
+      <div
+        class="col-sm-4 col-xs-12"
+        v-for="(tabla, key) in datos"
+        v-bind:key="key"
+      >
+        <editortablas v-bind:tabla="tabla"></editortablas>
+      </div>
     </div>
   </div>
 </template>
