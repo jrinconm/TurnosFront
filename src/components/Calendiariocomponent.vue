@@ -8,6 +8,9 @@
           <q-separator vertical />
           <q-btn dense flat label="Next" @click="calendarNext" />
         </q-btn-group>
+        <div class="col-4" style="text-align: center;">
+          {{ title }}
+        </div>
         <div v-show="imprimir">
           <q-btn
             v-if="imprimir"
@@ -42,7 +45,7 @@
             locale="es-es"
             animated
             :day-height="0"
-            :weekdays="[1, 2, 3, 4, 5, 6, 0]"
+            :weekdays="[1, 2, 3, 4, 5]"
             :disabled-weekdays="[0, 6]"
             transition-prev="slide-right"
             transition-next="slide-left"
@@ -50,12 +53,14 @@
             show-work-weeks
             @click:day2="onClickDay2"
             @click:workweek2="onClickWorkweek2"
+            @change="onChange"
           >
             <template #day="{ timestamp }">
               <template v-for="(event, index) in getEvents(timestamp.date)">
                 <q-badge
                   :key="index"
-                  style="width: 100%; cursor: pointer; height: 16px; max-height: 16px"
+                  align="middle"
+                  style="width: 100%; cursor: pointer; height:24px"
                   :class="badgeClasses(event, 'day')"
                   :style="badgeStyles(event, 'day')"
                 >
@@ -63,8 +68,8 @@
                     v-if="event.icon"
                     :name="event.icon"
                     class="q-mr-xs"
-                  ></q-icon
-                  ><span class="ellipsis">{{ event.title }}</span>
+                  ></q-icon>
+                  {{ event.title }}
                 </q-badge>
               </template>
             </template>
@@ -164,7 +169,9 @@ export default {
       color: "",
       icono: "",
       usuario: "",
-      mostrarimprimir: ""
+      mostrarimprimir: "",
+      title: "",
+      start: undefined
     };
   },
   props: ["imprimir"],
@@ -213,6 +220,15 @@ export default {
         .catch(error => {
           console.log(error);
         });
+    },
+    onChange({ start }) {
+      const date = new Date(start.date); // 2009-11-10
+      this.title = date
+        .toLocaleString("default", {
+          month: "long"
+        })
+        .toUpperCase();
+      //this.title = start;
     },
     obtendatos() {
       api
@@ -417,6 +433,11 @@ export default {
 }
 .parpadea {
   animation: parpadear 1s linear infinite;
+}
+.q-badge {
+  margin-top: 0.3rem;
+  margin: 0.2rem;
+  font-size: 1rem;
 }
 
 @keyframes parpadear {
