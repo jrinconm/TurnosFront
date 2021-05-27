@@ -247,6 +247,7 @@ export default {
     },
     generaevento(consulta) {
       let evento = {
+        id: consulta.id,
         title: consulta.Usuario.username,
         details: "Trabajo presencial en sede",
         date: consulta.dia,
@@ -261,9 +262,9 @@ export default {
       let consulta = {
         dia: data.scope.timestamp.date,
         Usuario: {
-          username: this.usuario,
+          username: this.username,
           color: this.color,
-          icon: this.icon
+          icon: this.icono
         }
       };
       let evento = this.generaevento(consulta);
@@ -282,7 +283,7 @@ export default {
           this.events[i].date == data.scope.timestamp.date &&
           this.events[i].title === this.username
         ) {
-          eliminar && this.eliminarDia(evento);
+          eliminar && this.eliminarDia(this.events[i].id);
           //Lo marcamos para no añadir
           aditar = false;
         }
@@ -292,10 +293,9 @@ export default {
         this.agregarDia(evento);
       }
     },
-    eliminarDia(dia) {
-      let eventoBorrar = this.events.filter(x => x.date == dia.date);
+    eliminarDia(id) {
       api
-        .delete("/api/diapresencial/id?id=" + eventoBorrar[0].id, {
+        .delete("/api/diapresencial/id?id=" + id, {
           headers: { "x-access-token": this.JWTToken }
         })
         .then(response => {
@@ -318,9 +318,9 @@ export default {
         [`text-white bg-${event.bgcolor}`]: !cssColor,
         "full-width": !isHeader && (!event.side || event.side === "full"),
         "left-side": !isHeader && event.side === "left",
-        "right-side": !isHeader && event.side === "right",
-        parpadea: !isHeader && event.estado !== 2,
-        cambiando: !isHeader && event.estado === 3
+        "right-side": !isHeader && event.side === "right"
+        //parpadea: !isHeader && event.estado !== 2,
+        //cambiando: !isHeader && event.estado === 3
       };
     },
     agregarDia: function(dia) {

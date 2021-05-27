@@ -132,7 +132,8 @@ export default {
       editedItem: {
         username: "",
         email: "",
-        rol: "base"
+        rol: "base",
+        departamento: 2
       },
       defaultItem: {
         username: "",
@@ -261,12 +262,13 @@ export default {
         Object.assign(this.data[this.editedIndex], this.editedItem);
       } else {
         let body = {
-          rol: this.editedItem.rol,
+          //rol: this.editedItem.rol,
           username: this.editedItem.username,
-          email: this.editedItem.email
+          email: this.editedItem.email,
+          departamento: this.editedItem.departamento
         };
         api
-          .put("/api/user/", body, {
+          .post("/api/user/", body, {
             headers: { "x-access-token": this.JWTToken }
           })
           .then(response => {
@@ -275,7 +277,7 @@ export default {
               position: "top",
               message: response.data.message
             });
-            console.log(response.data);
+            this.obtendatos();
           })
           .catch(error => {
             this.$q.notify({
@@ -292,20 +294,15 @@ export default {
     },
     deleteItem(item) {
       const id = item.id;
-      this.confirm("Seguro que quieres borrar esta linea?") &&
-        //confirm("Are you sure you want to delete this item?") &&
-        this.borraDatoTabla(id);
-    },
-    confirm(texto) {
       this.$q
         .dialog({
-          title: "Confirm",
-          message: texto,
+          title: "Confirmar borrado",
+          message: "Seguro que quieres borrar esta linea?",
           cancel: true,
           persistent: true
         })
         .onOk(() => {
-          return true;
+          this.borraDatoTabla(id);
         })
         .onCancel(() => {
           return false;
@@ -317,10 +314,11 @@ export default {
           headers: { "x-access-token": this.JWTToken }
         })
         .then(response => {
-          console.log(response.data);
+          this.notifica("positive", response.data.message);
+          this.obtendatos();
         })
         .catch(error => {
-          console.log(error);
+          this.notifica("negative", error);
         });
       this.obtendatos();
     },
@@ -328,6 +326,13 @@ export default {
       this.editedIndex = this.data.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.show_dialog = true;
+    },
+    notifica(tipo, datos) {
+      this.$q.notify({
+        type: tipo,
+        position: "top",
+        message: datos
+      });
     },
     resetpass(item) {
       let id = item.id;
@@ -358,7 +363,7 @@ export default {
             position: "top",
             message: response.data.message
           });
-          console.log(response.data);
+          this.obtendatos();
         })
         .catch(error => {
           this.$q.notify({
@@ -370,7 +375,7 @@ export default {
     },
     actualizar(item) {
       let body = { ...item };
-      // Elimino lo que no necesito
+      // Elimino lo que no necesito actualizar
       delete body.id;
       delete body.createdAt;
       delete body.updatedAt;
@@ -385,6 +390,7 @@ export default {
             message: response.data.message
           });
           console.log(response.data);
+          this.obtendatos();
         })
         .catch(error => {
           this.$q.notify({
