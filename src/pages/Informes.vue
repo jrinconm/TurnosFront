@@ -1,27 +1,43 @@
 <!-- Aqui template, donde ira el HTML que Vue renderizara -->
 <template>
-  <div class="donut">
-    <donut-component :datos="datos" :castellanoactivo="true" />
-    <div>
-      <apexchart
-        width="500"
-        type="bar"
-        :options="options"
-        :series="series"
-      ></apexchart>
-      <apexchart
-        width="380"
-        type="donut"
-        :options="options2"
-        :series="series2"
-      ></apexchart>
+  <div class="graficos">
+    <q-separator />
+    <div class="row q-pa-sm q-ma-md-lg">
+      <div class="col-sm-4 col-xs-12 q-mx-md-xl q-px-md-xl">
+        <h6 class="centrado">Dias por usuario</h6>
+        <apexchart :options="options" :series="series"></apexchart>
+      </div>
+
+      <q-separator vertical />
+
+      <div class="col-sm-4 col-xs-12 q-mx-md-xl q-px-md-xl">
+        <h6 class="centrado">Usuario por días</h6>
+        <apexchart :options="optionsb" :series="seriesb"></apexchart>
+      </div>
     </div>
+    <q-separator />
+    <div class="row q-pa-sm q-ma-md-lg ">
+      <div class="col-sm-4 col-xs-12 q-mx-md-xl q-px-md-xl">
+        <h6 class="centrado">Total días</h6>
+        <apexchart
+          type="donut"
+          :options="options2"
+          :series="series2"
+        ></apexchart>
+      </div>
+      <q-separator vertical />
+      <div class="col-sm-4 col-xs-12 q-mx-md-xl q-px-md-xl">
+        <h6 class="centrado">Porcentaje ocupación diaria</h6>
+        <apexchart :options="options3" :series="series3"></apexchart>
+      </div>
+    </div>
+
+    <div></div>
   </div>
 </template>
 <!-- Aqui script, donde irá el Javascript (métodos, funciones, etc) -->
 <script>
 import QCalendar from "@quasar/quasar-ui-qcalendar"; // ui is aliased from '@quasar/quasar-ui-qcalendar'
-import DonutComponent from "../components/DonutComponent.vue";
 import { api } from "boot/axios";
 import Vue from "vue";
 import VueApexCharts from "vue-apexcharts";
@@ -36,9 +52,6 @@ function getCurrentDay(day) {
   return tm.date;
 }*/
 export default {
-  components: {
-    DonutComponent
-  },
   name: "Informes",
   data() {
     return {
@@ -46,24 +59,152 @@ export default {
       now: "",
       events: [],
       datos: { presencial: 12, nopresencial: 30 },
-      options2: {},
-      series2: [44, 55, 41, 17, 15],
+      options2: {
+        chart: {
+          type: "donut"
+        },
+        labels: ["Pepe", "Jose", "Josep"]
+      },
+      series2: [8, 12, 10],
+      options3: {
+        chart: {
+          type: "donut"
+        },
+        labels: ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes"]
+      },
+      series3: [6, 6, 6, 6, 6],
+      series: [
+        {
+          name: "Pepe",
+          data: [0, 4, 0, 4, 0]
+        },
+        {
+          name: "Jose",
+          data: [4, 0, 4, 0, 4]
+        },
+        {
+          name: "Josep",
+          data: [2, 2, 2, 2, 2]
+        }
+      ],
+      optionsb: {
+        chart: {
+          type: "bar",
+          height: 350
+        },
+        plotOptions: {
+          bar: {
+            horizontal: false,
+            columnWidth: "55%",
+            endingShape: "rounded"
+          }
+        },
+        dataLabels: {
+          enabled: false
+        },
+        stroke: {
+          show: true,
+          width: 2,
+          colors: ["transparent"]
+        },
+        xaxis: {
+          categories: ["Pepe", "Jose", "Josep"]
+        },
+        yaxis: {
+          title: {
+            text: "Dias"
+          }
+        },
+        fill: {
+          opacity: 1
+        },
+        tooltip: {
+          y: {
+            formatter: function(val) {
+              return val + " días";
+            }
+          }
+        }
+      },
+      seriesb: [
+        {
+          name: "Lunes",
+          data: [0, 4, 2]
+        },
+        {
+          name: "Martes",
+          data: [4, 0, 2]
+        },
+        {
+          name: "Miércoles",
+          data: [0, 4, 2]
+        },
+        {
+          name: "Jueves",
+          data: [4, 0, 2]
+        },
+        {
+          name: "Viernes",
+          data: [0, 4, 2]
+        }
+      ],
       options: {
+        chart: {
+          type: "bar",
+          height: 350
+        },
+        plotOptions: {
+          bar: {
+            horizontal: false,
+            columnWidth: "55%",
+            endingShape: "rounded"
+          }
+        },
+        dataLabels: {
+          enabled: false
+        },
+        stroke: {
+          show: true,
+          width: 2,
+          colors: ["transparent"]
+        },
+        xaxis: {
+          categories: ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes"]
+        },
+        yaxis: {
+          title: {
+            text: "Dias"
+          }
+        },
+        fill: {
+          opacity: 1
+        },
+        tooltip: {
+          y: {
+            formatter: function(val) {
+              return val + " días";
+            }
+          }
+        }
+      }
+    };
+  },
+  /*options: {
         chart: {
           id: "vuechart-example"
         },
         xaxis: {
-          categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998]
+          categories: ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes"]
         }
       },
       series: [
         {
           name: "series-1",
-          data: [30, 40, 45, 50, 49, 60, 70, 91]
+          data: [30, 40, 45, 50, 49]
         }
       ]
     };
-  },
+  },*/
   computed: {
     usuario: function() {
       return jrincon;
@@ -118,6 +259,21 @@ export default {
     }
   },
   methods: {
+    /* getWeekDays() {
+      {
+        var baseDate = new Date(Date.UTC(2017, 0, 2)); // just a Monday
+        var weekDays = [];
+        for (i = 0; i < 7; i++) {
+          weekDays.push(
+            baseDate.toLocaleDateString(locale, { weekday: "long" })
+          );
+          baseDate.setDate(baseDate.getDate() + 1);
+        }
+        return weekDays;
+      }
+
+      var weekDays = getWeekDays("nl-NL");
+    },*/
     fillData() {
       /*
       let cantidad = {};
@@ -170,8 +326,7 @@ export default {
 };
 </script>
 <style scoped>
-.small {
-  max-width: 600px;
-  margin: 150px auto;
+.centrado {
+  text-align: center;
 }
 </style>
