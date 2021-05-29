@@ -261,7 +261,7 @@ export default {
         date: consulta.dia,
         bgcolor: consulta.Usuario.color,
         icon: consulta.Usuario.icono,
-        estado: consulta.EstadoDiumId
+        estado: consulta.estado
       };
       return evento;
     },
@@ -326,7 +326,9 @@ export default {
         [`text-white bg-${event.bgcolor}`]: !cssColor,
         "full-width": !isHeader && (!event.side || event.side === "full"),
         "left-side": !isHeader && event.side === "left",
-        "right-side": !isHeader && event.side === "right"
+        "right-side": !isHeader && event.side === "right",
+        provisional: !isHeader && event.estado !== "Provisional",
+        cambiando: !isHeader && event.estado === "CambioPedido"
       };
     },
     agregarDia: function(dia) {
@@ -421,18 +423,13 @@ export default {
 .vistacalendario {
   background: black;
 }
-.parpadea {
-  animation: parpadear 1s linear infinite;
-}
 .q-badge {
   margin-top: 0.3rem;
   margin: 0.2rem;
   font-size: 1rem;
 }
-
-@keyframes parpadear {
-  50% {
-    opacity: 0;
-  }
+.provisional {
+  color: white;
+  background: black;
 }
 </style>

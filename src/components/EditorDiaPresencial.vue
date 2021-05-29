@@ -91,10 +91,10 @@
 import { api } from "boot/axios";
 export default {
   name: "editortablas",
-  props: ["tabla"],
   data() {
     return {
       data: [],
+      tabla: "DiaPresencial",
       show_dialog: false,
       editedIndex: -1,
       editedItem: {
@@ -110,16 +110,25 @@ export default {
           required: true,
           label: "ID",
           align: "left",
-          field: row => row.name,
+          field: row => row.id,
           format: val => `${val}`,
           sortable: true
         },
         {
-          name: "descripcion",
+          name: "dia",
           required: true,
-          label: "DESCRIPCIÓN",
+          label: "Dia",
           align: "left",
-          field: row => row.name,
+          field: row => row.dia,
+          format: val => `${val}`,
+          sortable: true
+        },
+        {
+          name: "estado",
+          required: true,
+          label: "Estado",
+          align: "left",
+          field: row => row.estado,
           format: val => `${val}`,
           sortable: true
         },

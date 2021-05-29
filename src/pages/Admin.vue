@@ -12,25 +12,20 @@
         v-for="(tabla, key) in datos"
         v-bind:key="key"
       >
-        <editortablas v-bind:tabla="tabla"></editortablas>
+        <editortablas></editortablas>
       </div>
     </div>
   </div>
 </template>
 <!-- Aqui script, donde irá el Javascript (métodos, funciones, etc) -->
 <script>
-import editortablas from "../components/EditorTablas.vue";
+import editortablas from "../components/EditorDiaPresencial.vue";
 import gestorusuario from "../components/Usuariocomponent.vue";
 export default {
   name: "Administracion",
   components: {
     editortablas,
     gestorusuario
-  },
-  data() {
-    return {
-      datos: [{ nombre: "Estados", tabla: "estadodia" }]
-    };
   }
 };
 </script>
