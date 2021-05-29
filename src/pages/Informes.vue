@@ -90,7 +90,8 @@ export default {
       optionsb: {
         chart: {
           type: "bar",
-          height: 350
+          height: 350,
+          toolbar: { tools: { download: false } }
         },
         plotOptions: {
           bar: {
@@ -151,7 +152,8 @@ export default {
       options: {
         chart: {
           type: "bar",
-          height: 350
+          height: 350,
+          toolbar: { tools: { download: true } }
         },
         plotOptions: {
           bar: {

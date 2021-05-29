@@ -4,10 +4,16 @@
     <q-table
       :title="tabla.nombre"
       :data="data"
-      row-key="name"
+      row-key="id"
       binary-state-sort
       :columns="columns"
     >
+    </q-table>
+  </div>
+</template>
+<!-- Aqui script, donde irá el Javascript (métodos, funciones, etc) -->
+<script>
+/*
       <template v-slot:top-right>
         <q-btn
           align="right"
@@ -45,24 +51,23 @@
       </template>
       <template v-slot:body="props">
         <q-tr :props="props">
-          <q-td key="id" :props="props">
-            <q-badge color="white" text-color="black" :label="props.row.id" />
-          </q-td>
-          <q-td key="descripcion" :props="props">
-            <q-badge
-              outline
-              color="primary"
-              :label="props.row.descripcion"
-              class="q-ma-sm q-pa-sm"
-            />
-            <q-popup-edit v-model="props.row.descripcion">
-              <q-input
-                v-model="props.row.descripcion"
-                dense
-                autofocus
-                counter
-              />
+          <q-td v-for="(column, key) in columnasvisibles" v-bind:key="key">
+            <q-popup-edit
+              v-if="
+                column.name !== 'id' &&
+                  column.name !== 'dia' &&
+                  column.name !== 'usuario'
+              "
+              v-model="props.row[column.name]"
+            >
+              <q-input v-model="props.row[column.name]" dense autofocus counter>
+                <template v-slot:append>
+                  <q-icon name="edit" />
+                </template>
+              </q-input>
             </q-popup-edit>
+            {{ props.row[column.name] }}
+            {{ key }}
           </q-td>
           <q-td key="actions" :props="props">
             <q-btn
@@ -83,11 +88,8 @@
           </q-td>
         </q-tr>
       </template>
-    </q-table>
-  </div>
-</template>
-<!-- Aqui script, donde irá el Javascript (métodos, funciones, etc) -->
-<script>
+*/
+
 import { api } from "boot/axios";
 export default {
   name: "editortablas",
@@ -133,9 +135,13 @@ export default {
           sortable: true
         },
         {
-          name: "actions",
-          label: "Acciones",
-          field: "actions"
+          name: "usuario",
+          required: true,
+          label: "Usuario",
+          align: "left",
+          sortable: true,
+          field: row => row.Usuario.username,
+          format: val => `${val}`
         }
       ]
     };
@@ -149,7 +155,24 @@ export default {
     }, // store the id in localstorage
     username: function() {
       return localStorage.getItem("username");
-    } // store the username in localstorage
+    }, // store the username in localstorage
+    columnasvisibles: function() {
+      let ver = this.columns.filter(function(columna) {
+        return columna.name != "usuario";
+      });
+      console.log(ver);
+      return ver;
+    },
+    nombres: function() {
+      //Obtengo los nombres de las tablas
+      let vm = this;
+      let nombres = [];
+      this.data.forEach(element => {
+        console.log(element.UsuarioId + " ->" + element.Usuario.username);
+        vm.$set(nombres, element.UsuarioId, element.Usuario.username);
+      });
+      return nombres;
+    }
   },
   mounted() {
     this.obtendatos();
@@ -157,7 +180,7 @@ export default {
   methods: {
     obtendatos() {
       api
-        .get("/api/" + this.tabla.tabla + "/", {
+        .get("/api/" + this.tabla + "/", {
           headers: { "x-access-token": this.JWTToken }
         })
         .then(response => {

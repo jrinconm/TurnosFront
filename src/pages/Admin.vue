@@ -6,25 +6,21 @@
         <gestorusuario></gestorusuario>
       </div>
     </div>
-    <div class="row q-pa-md-xl q-ma-md-xl ">
-      <div
-        class="col-sm-4 col-xs-12"
-        v-for="(tabla, key) in datos"
-        v-bind:key="key"
-      >
-        <editortablas></editortablas>
+    <div class="row q-pa-md-sx q-ma-md-xl ">
+      <div class="col-sm-4 col-xs-12">
+        <editordias></editordias>
       </div>
     </div>
   </div>
 </template>
 <!-- Aqui script, donde irá el Javascript (métodos, funciones, etc) -->
 <script>
-import editortablas from "../components/EditorDiaPresencial.vue";
+import editordias from "../components/EditorDiaPresencial.vue";
 import gestorusuario from "../components/Usuariocomponent.vue";
 export default {
   name: "Administracion",
   components: {
-    editortablas,
+    editordias,
     gestorusuario
   }
 };
