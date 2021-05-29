@@ -327,7 +327,7 @@ export default {
         "full-width": !isHeader && (!event.side || event.side === "full"),
         "left-side": !isHeader && event.side === "left",
         "right-side": !isHeader && event.side === "right",
-        provisional: !isHeader && event.estado !== "Provisional",
+        provisional: !isHeader && event.estado === "Provisional",
         cambiando: !isHeader && event.estado === "CambioPedido"
       };
     },
@@ -419,7 +419,7 @@ export default {
   }
 };
 </script>
-<style scoped>
+<style lang="scss" scoped>
 .vistacalendario {
   background: black;
 }
@@ -429,7 +429,15 @@ export default {
   font-size: 1rem;
 }
 .provisional {
-  color: white;
-  background: black;
+  border: red 2px solid;
+  animation: blink 1s infinite;
+}
+.provisional {
+  border: red 2px solid;
+}
+@keyframes blink {
+  50% {
+    border-color: #fff;
+  }
 }
 </style>
