@@ -83,7 +83,7 @@
 <script>
 import QCalendar from "@quasar/quasar-ui-qcalendar"; // ui is aliased from '@quasar/quasar-ui-qcalendar'
 import { api } from "boot/axios";
-
+import { notifica, alerta } from "src/Includes/funciones";
 const reRGBA = /^\s*rgb(a)?\s*\((\s*(\d+)\s*,\s*?){2}(\d+)\s*,?\s*([01]?\.?\d*?)?\s*\)\s*$/;
 
 function removeItemFromArr(arr, item) {
@@ -266,40 +266,101 @@ export default {
       return evento;
     },
     onClickDay2(data) {
-      // Datos para los eventos
-      let consulta = {
-        dia: data.scope.timestamp.date,
-        Usuario: {
-          username: this.username,
-          color: this.color,
-          icon: this.icono
-        }
-      };
-      let evento = this.generaevento(consulta);
-      // Por defecto añado el dia
-      let aditar = true;
-      let eliminar = true;
+      let vm = this;
       // Si es un dia en el pasado no dejo aditar
       if (data.scope.timestamp.date < QCalendar.today()) {
         alert("No puedes cambiar el pasado, mejora el futuro");
-        aditar = false;
         eliminar = false;
       }
+      // Por defecto añado el dia
+      let aditar = true;
       // Recorro los eventos y miro si ya tengo marcado el dia
       for (let i = 0; i < this.events.length; ++i) {
         if (
           this.events[i].date == data.scope.timestamp.date &&
           this.events[i].title === this.username
         ) {
-          eliminar && this.eliminarDia(this.events[i].id);
+          if (this.events[i].estado === "Confirmado") {
+            alerta(vm, "Dia ya confirmado, no se puede modificar");
+          } else {
+            this.consultarModificarDia(this.events[i].id);
+          }
           //Lo marcamos para no añadir
           aditar = false;
         }
       }
       // Si tenemos que aditar construyo el evento
       if (aditar) {
+        // Datos para los eventos
+        let consulta = {
+          dia: data.scope.timestamp.date,
+          Usuario: {
+            username: this.username,
+            color: this.color,
+            icon: this.icono
+          }
+        };
+        let evento = this.generaevento(consulta);
         this.agregarDia(evento);
       }
+    },
+    consultarModificarDia(id) {
+      this.$q
+        .dialog({
+          title: "Modificar dia",
+          options: {
+            type: "radio",
+            model: "opt1",
+            // inline: true
+            items: [
+              {
+                label: "Confimar día presencial",
+                value: "Confirmado",
+                color: "positive"
+              },
+              {
+                label: "Solicitar cambio",
+                value: "CambioPedido",
+                color: "secondary"
+              },
+              {
+                label: "Eliminar día presencial",
+                color: "negative",
+                value: false
+              }
+            ]
+          },
+          cancel: true,
+          persistent: true
+        })
+        .onOk(
+          data => {
+            if (data) {
+              this.cambiarEstadoDia(id, data);
+            } else {
+              this.eliminarDia(id);
+            }
+          }
+
+          //
+        );
+    },
+    cambiarEstadoDia(id, estado) {
+      let vm = this;
+      let campo = {
+        estado: estado
+      };
+      api
+        .put("/api/diapresencial/id?id=" + id, campo, {
+          headers: { "x-access-token": this.JWTToken }
+        })
+        .then(response => {
+          notifica(vm, "positive", response.data.message);
+          this.obtendatos();
+        })
+        .catch(error => {
+          notifica(vm, "negative", error);
+        });
     },
     eliminarDia(id) {
       api
@@ -328,7 +389,8 @@ export default {
         "left-side": !isHeader && event.side === "left",
         "right-side": !isHeader && event.side === "right",
         provisional: !isHeader && event.estado === "Provisional",
-        cambiando: !isHeader && event.estado === "CambioPedido"
+        cambiando: !isHeader && event.estado === "CambioPedido",
+        confirmado: !isHeader && event.estado === "Confirmado"
       };
     },
     agregarDia: function(dia) {
@@ -432,9 +494,14 @@ export default {
   border: red 2px solid;
   animation: blink 1s infinite;
 }
-.provisional {
-  border: red 2px solid;
+.confirmado {
+  border: black 2px solid;
 }
+.cambiando {
+  border: blue 2px solid;
+  animation: blink 1s infinite;
+}
+
 @keyframes blink {
   50% {
     border-color: #fff;
