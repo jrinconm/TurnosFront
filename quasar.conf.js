@@ -20,7 +20,9 @@ module.exports = function(/* ctx */) {
     // --> boot files are part of "main.js"
     // https://v1.quasar.dev/quasar-cli/boot-files
     boot: ["i18n", "axios"],
-
+    bin: {
+      linuxAndroidStudio: "/home/julian/android-studio/bin/studio.sh"
+    },
     // https://v1.quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
     css: ["app.scss"],
 
