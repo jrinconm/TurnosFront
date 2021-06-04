@@ -184,6 +184,9 @@ export default {
     }, // store the id in localstorage
     username: function() {
       return localStorage.getItem("username");
+    }, // store the username in localstorage
+    rol: function() {
+      return localStorage.getItem("rol");
     } // store the username in localstorage
   },
   mounted() {
@@ -218,7 +221,7 @@ export default {
             : (this.icono = "work");
         })
         .catch(error => {
-          console.log(error);
+          notifica(vm, "negative", error);
         });
     },
     onChange({ start }) {
@@ -247,7 +250,7 @@ export default {
           });
         })
         .catch(error => {
-          console.log(error);
+          notifica(vm, "negative", error);
         });
     },
     calendarPrev() {
@@ -268,7 +271,10 @@ export default {
     onClickDay2(data) {
       let vm = this;
       // Si es un dia en el pasado no dejo aditar
-      if (data.scope.timestamp.date < QCalendar.today()) {
+      if (
+        data.scope.timestamp.date < QCalendar.today() &&
+        this.rol === "base"
+      ) {
         alert("No puedes cambiar el pasado, mejora el futuro");
         eliminar = false;
       }
@@ -280,7 +286,7 @@ export default {
           this.events[i].date == data.scope.timestamp.date &&
           this.events[i].title === this.username
         ) {
-          if (this.events[i].estado === "Confirmado") {
+          if (this.events[i].estado === "Confirmado" && this.rol === "base") {
             alerta(vm, "Dia ya confirmado, no se puede modificar");
           } else {
             this.consultarModificarDia(this.events[i].id);
@@ -368,12 +374,11 @@ export default {
           headers: { "x-access-token": this.JWTToken }
         })
         .then(response => {
-          this.data = response.data;
+          notifica(vm, "positive", response.data.message);
           this.obtendatos();
         })
         .catch(error => {
-          console.log("Error");
-          console.log(error);
+          notifica(vm, "negative", error);
         });
     },
     onClickWorkweek2(data) {},
@@ -401,11 +406,11 @@ export default {
           headers: { "x-access-token": this.JWTToken }
         })
         .then(response => {
-          this.data = response.data;
+          notifica(vm, "positive", response.data.message);
           this.obtendatos();
         })
         .catch(error => {
-          console.log(error);
+          notifica(vm, "negative", error);
         });
     },
     badgeStyles(event, type, timeStartPos, timeDurationHeight) {

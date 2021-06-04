@@ -122,6 +122,7 @@
 <!-- Aqui script, donde irá el Javascript (métodos, funciones, etc) -->
 <script>
 import { api } from "boot/axios";
+import { notifica } from "src/Includes/funciones";
 export default {
   name: "gestorusuario",
   data() {
@@ -264,7 +265,7 @@ export default {
           this.data = response.data;
         })
         .catch(error => {
-          console.log(error);
+          notifica(vm, "negative", error);
         });
     },
     addRow() {
@@ -282,19 +283,11 @@ export default {
             headers: { "x-access-token": this.JWTToken }
           })
           .then(response => {
-            this.$q.notify({
-              type: "positive",
-              position: "top",
-              message: response.data.message
-            });
+            notifica(vm, "positive", response.data.message);
             this.obtendatos();
           })
           .catch(error => {
-            this.$q.notify({
-              type: "negative",
-              position: "top",
-              message: error
-            });
+            notifica(vm, "negative", error);
           });
 
         console.log(body);
@@ -324,11 +317,11 @@ export default {
           headers: { "x-access-token": this.JWTToken }
         })
         .then(response => {
-          this.notifica("positive", response.data.message);
+          notifica(vm, "positive", response.data.message);
           this.obtendatos();
         })
         .catch(error => {
-          this.notifica("negative", error);
+          notifica(vm, "negative", error);
         });
       this.obtendatos();
     },
@@ -336,13 +329,6 @@ export default {
       this.editedIndex = this.data.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.show_dialog = true;
-    },
-    notifica(tipo, datos) {
-      this.$q.notify({
-        type: tipo,
-        position: "top",
-        message: datos
-      });
     },
     resetpass(item) {
       let id = item.id;
@@ -368,19 +354,11 @@ export default {
           headers: { "x-access-token": this.JWTToken }
         })
         .then(response => {
-          this.$q.notify({
-            type: "positive",
-            position: "top",
-            message: response.data.message
-          });
+          notifica(vm, "positive", response.data.message);
           this.obtendatos();
         })
         .catch(error => {
-          this.$q.notify({
-            type: "negative",
-            position: "top",
-            message: error
-          });
+          notifica(vm, "negative", error);
         });
     },
     actualizar(item) {
@@ -394,20 +372,11 @@ export default {
           headers: { "x-access-token": this.JWTToken }
         })
         .then(response => {
-          this.$q.notify({
-            type: "positive",
-            position: "top",
-            message: response.data.message
-          });
-          console.log(response.data);
+          notifica(vm, "positive", response.data.message);
           this.obtendatos();
         })
         .catch(error => {
-          this.$q.notify({
-            type: "negative",
-            position: "top",
-            message: error
-          });
+          notifica(vm, "negative", error);
         });
     },
     close() {
