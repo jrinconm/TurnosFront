@@ -133,7 +133,7 @@ export default {
         username: "",
         email: "",
         rol: "base",
-        departamento: 2
+        departamento: "administración"
       },
       defaultItem: {
         username: "",
@@ -162,6 +162,16 @@ export default {
           format: val => `${val}`,
           sortable: true
         },
+        {
+          name: "nombre",
+          required: true,
+          label: "Nombre",
+          align: "left",
+          field: row => row.nombre,
+          format: val => `${val}`,
+          sortable: true
+        },
+
         {
           name: "email",
           required: true,

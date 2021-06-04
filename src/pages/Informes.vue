@@ -104,13 +104,6 @@ export default {
     },
     valoresOcupacion: function() {
       return this.generaValoresOcupacion();
-    },
-    usuariosdias: function() {
-      let idUsuarios = [];
-      if (this.usuarios) {
-        this.usuarios.forEach(usuario => idUsuarios.push(usuario.username));
-      }
-      return idUsuarios;
     }
   },
   methods: {
@@ -194,7 +187,7 @@ export default {
       let datos = [];
       this.usuarios.forEach(usuario => {
         let objeto = {};
-        objeto.name = usuario.username;
+        objeto.name = usuario.nombre;
         objeto.data = [];
         let dias = this.diasUsuario(usuario.id);
         for (let x = 0; x < 5; x++) {
@@ -240,7 +233,7 @@ export default {
 
     obtenNombres: function() {
       let nombre = [];
-      this.usuarios.forEach(usuario => nombre.push(usuario.username));
+      this.usuarios.forEach(usuario => nombre.push(usuario.nombre));
       return nombre;
     },
     diasUsuario: function(usuario) {
