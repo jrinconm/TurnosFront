@@ -5,14 +5,19 @@
     <div class="row q-pa-sm q-ma-md-lg">
       <div class="col-sm-4 col-xs-12 q-mx-md-xl q-px-md-xl">
         <h6 class="centrado">Dias por usuario</h6>
-        <apexchart :options="options" :series="series"></apexchart>
+        <apexchart
+          :options="opcionesDiasUsuarios"
+          :series="valoresDiasUsuarios"
+        ></apexchart>
       </div>
-
       <q-separator vertical />
 
       <div class="col-sm-4 col-xs-12 q-mx-md-xl q-px-md-xl">
         <h6 class="centrado">Usuario por días</h6>
-        <apexchart :options="optionsb" :series="seriesb"></apexchart>
+        <apexchart
+          :options="opcionesUsuariosDias"
+          :series="valoresUsuariosDias"
+        ></apexchart>
       </div>
     </div>
     <q-separator />
@@ -21,310 +26,248 @@
         <h6 class="centrado">Total días</h6>
         <apexchart
           type="donut"
-          :options="options2"
-          :series="series2"
+          :options="opcionesTotalDias"
+          :series="valoresTotalDias"
         ></apexchart>
       </div>
       <q-separator vertical />
       <div class="col-sm-4 col-xs-12 q-mx-md-xl q-px-md-xl">
         <h6 class="centrado">Porcentaje ocupación diaria</h6>
-        <apexchart :options="options3" :series="series3"></apexchart>
+        <apexchart
+          :options="opcionesOcupacion"
+          :series="valoresOcupacion"
+        ></apexchart>
       </div>
     </div>
-
-    <div></div>
   </div>
 </template>
 <!-- Aqui script, donde irá el Javascript (métodos, funciones, etc) -->
 <script>
 import QCalendar from "@quasar/quasar-ui-qcalendar"; // ui is aliased from '@quasar/quasar-ui-qcalendar'
 import { api } from "boot/axios";
+import {
+  configUsuarioDias,
+  configDiasUsuario,
+  objDiasSemana,
+  arrDiasSemana
+} from "../Includes/opcionesgraficos";
 import Vue from "vue";
 import VueApexCharts from "vue-apexcharts";
 
 Vue.use(VueApexCharts);
 Vue.component("apexchart", VueApexCharts);
-/* const CURRENT_DAY = new Date();
-function getCurrentDay(day) {
-  const newDay = new Date(CURRENT_DAY);
-  newDay.setDate(day);
-  const tm = QCalendar.parseDate(newDay);
-  return tm.date;
-}*/
 export default {
   name: "Informes",
   data() {
     return {
-      selectedDate: "",
-      now: "",
-      events: [],
-      datos: { presencial: 12, nopresencial: 30 },
-      options2: {
-        chart: {
-          type: "donut"
-        },
-        labels: ["Pepe", "Jose", "Josep"]
-      },
-      series2: [8, 12, 10],
-      options3: {
-        chart: {
-          type: "donut"
-        },
-        labels: ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes"]
-      },
-      series3: [6, 6, 6, 6, 6],
-      series: [
-        {
-          name: "Pepe",
-          data: [0, 4, 0, 4, 0]
-        },
-        {
-          name: "Jose",
-          data: [4, 0, 4, 0, 4]
-        },
-        {
-          name: "Josep",
-          data: [2, 2, 2, 2, 2]
-        }
-      ],
-      optionsb: {
-        chart: {
-          type: "bar",
-          height: 350,
-          toolbar: { tools: { download: false } }
-        },
-        plotOptions: {
-          bar: {
-            horizontal: false,
-            columnWidth: "55%",
-            endingShape: "rounded"
-          }
-        },
-        dataLabels: {
-          enabled: false
-        },
-        stroke: {
-          show: true,
-          width: 2,
-          colors: ["transparent"]
-        },
-        xaxis: {
-          categories: ["Pepe", "Jose", "Josep"]
-        },
-        yaxis: {
-          title: {
-            text: "Dias"
-          }
-        },
-        fill: {
-          opacity: 1
-        },
-        tooltip: {
-          y: {
-            formatter: function(val) {
-              return val + " días";
-            }
-          }
-        }
-      },
-      seriesb: [
-        {
-          name: "Lunes",
-          data: [0, 4, 2]
-        },
-        {
-          name: "Martes",
-          data: [4, 0, 2]
-        },
-        {
-          name: "Miércoles",
-          data: [0, 4, 2]
-        },
-        {
-          name: "Jueves",
-          data: [4, 0, 2]
-        },
-        {
-          name: "Viernes",
-          data: [0, 4, 2]
-        }
-      ],
-      options: {
-        chart: {
-          type: "bar",
-          height: 350,
-          toolbar: { tools: { download: true } }
-        },
-        plotOptions: {
-          bar: {
-            horizontal: false,
-            columnWidth: "55%",
-            endingShape: "rounded"
-          }
-        },
-        dataLabels: {
-          enabled: false
-        },
-        stroke: {
-          show: true,
-          width: 2,
-          colors: ["transparent"]
-        },
-        xaxis: {
-          categories: ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes"]
-        },
-        yaxis: {
-          title: {
-            text: "Dias"
-          }
-        },
-        fill: {
-          opacity: 1
-        },
-        tooltip: {
-          y: {
-            formatter: function(val) {
-              return val + " días";
-            }
-          }
-        }
-      }
+      consulta: "",
+      usuarios: [],
+      fechas: []
     };
   },
-  /*options: {
-        chart: {
-          id: "vuechart-example"
-        },
-        xaxis: {
-          categories: ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes"]
-        }
-      },
-      series: [
-        {
-          name: "series-1",
-          data: [30, 40, 45, 50, 49]
-        }
-      ]
-    };
-  },*/
   computed: {
-    usuario: function() {
-      return jrincon;
+    JWTToken: function() {
+      return localStorage.getItem("user-token");
+    }, // store the token in localstorage
+    hoy: function() {
+      return new Date();
     },
-    appChart: function() {
-      let hoy = QCalendar.today();
-      let estemes = hoy.substring(5, 7);
-      let objeto = {
-        labels: [],
-        hoverBackgroundColor: "red",
-        hoverBorderWidth: 10,
-        datasets: [
-          {
-            label: "Data One",
-            backgroundColor: ["#41B883", "#E46651", "#00D8FF"],
-            data: []
-          }
-        ]
-      };
-      this.events.forEach(element => {
-        // Solo miro este mes
-        if (element.dia.date.substring(5, 7) === estemes) {
-          objeto.labels.push(element.dia.title);
-        }
-      });
-      // Elimino duplicados
-      for (var i = objeto.labels.length - 1; i >= 0; i--) {
-        if (objeto.labels.indexOf(objeto.labels[i]) !== i)
-          objeto.labels.splice(i, 1);
+    departamento: function() {
+      return localStorage.getItem("departamento");
+    },
+    mes: function() {
+      return this.hoy.getMonth() + 1;
+    },
+    anyo: function() {
+      return this.hoy.getFullYear();
+    },
+    opcionesUsuariosDias: function() {
+      return this.generaOpcionesUsuariosDias();
+    },
+    valoresUsuariosDias: function() {
+      return this.generaValoresUsuariosDias();
+    },
+    opcionesDiasUsuarios: function() {
+      return this.generaOpcionesDiasUsuarios();
+    },
+    valoresDiasUsuarios: function() {
+      return this.generaValoresDiasUsuarios();
+    },
+    opcionesTotalDias: function() {
+      return this.generaOpcionesTotalDias();
+    },
+    valoresTotalDias: function() {
+      return this.generaValoresTotalDias();
+    },
+    opcionesOcupacion: function() {
+      return this.generaOpcionesOcupacion();
+    },
+    valoresOcupacion: function() {
+      return this.generaValoresOcupacion();
+    },
+    usuariosdias: function() {
+      let idUsuarios = [];
+      if (this.usuarios) {
+        this.usuarios.forEach(usuario => idUsuarios.push(usuario.username));
       }
-      objeto.labels.forEach(element => {
-        let cuenta = 0;
-        this.events.forEach(dia => {
-          if (element === dia.dia.title) {
-            cuenta++;
-            console.log(element);
-            console.log(dia.title);
-          }
-        });
-        objeto.datasets[0].data.push(cuenta);
-      });
-      /*
-        // Cuento las repeticiones
-
-          this.events.forEach(element => {
-        // Solo miro este mes
-        if(element.dia.date.substring(5,7)===estemes){
-          objeto.labels.push(element.dia.title);
-        }
-      });*/
-      return objeto;
+      return idUsuarios;
     }
   },
   methods: {
-    /* getWeekDays() {
-      {
-        var baseDate = new Date(Date.UTC(2017, 0, 2)); // just a Monday
-        var weekDays = [];
-        for (i = 0; i < 7; i++) {
-          weekDays.push(
-            baseDate.toLocaleDateString(locale, { weekday: "long" })
-          );
-          baseDate.setDate(baseDate.getDate() + 1);
-        }
-        return weekDays;
-      }
-
-      var weekDays = getWeekDays("nl-NL");
-    },*/
-    fillData() {
-      /*
-      let cantidad = {};
-      this.events.forEach(element => {
-        this.cantidad++;
-      });
-      this.datacollection = {
-        labels: [
-          this.events.forEach(element => {
-            return element.idTarea.title;
-          })
-        ]
-      };
-      this.events.forEach(element => {
-        console.log(element);
-      });
-      //this.datacollection = this.appChart;
-      this.appChart = this.datacollection;*/
-    },
-    obtendatos() {
+    generatotal() {
+      this.fechas.splice(0);
+      this.usuarios.splice(0);
       api
-        // Obtengo todos los días trabajados del usuario
-        // No obtengo solo el mes, porque no van a ser demasiados.
-        // Como mucho 365 al año!
-        .get("/api/diapresencial/name?usuario=" + this.id, {
+        // Obtengo todos los usuarios del mismo departamento que del usuario
+        .get("/api/user/dep?departamento=" + this.departamento, {
           headers: { "x-access-token": this.JWTToken }
         })
         .then(response => {
-          response.forEach(element => {
-            // ES2020 Operador, babel ya se encargará de transpilarlo
-            console.log(element);
+          let consulta = response.data;
+          consulta.forEach(usuario => {
+            // Saco los días por usuario
+            this.usuarios.push(usuario);
+            this.obtenDatosMesyUsuario(usuario.id);
           });
         })
         .catch(error => {
           console.log(error);
         });
     },
+    // // Obtengo todos los días del mismo departamento del usuario con id => id
+    obtenDatosMesyUsuario(id) {
+      api
+        .get(
+          "/api/diapresencial/mesynombre?mes=" +
+            this.mes +
+            "&anyo=" +
+            this.anyo +
+            "&usuario=" +
+            id,
+          {
+            headers: { "x-access-token": this.JWTToken }
+          }
+        )
+        .then(response => {
+          response.data.forEach(dia => {
+            this.fechas.push(dia);
+          });
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+
     diasMes: function(timestamp) {
       // Formato es YYYY-MM-DD
       let year = timestamp.substring(0, 3);
       let month = timestamp.substring(5, 6);
       let dias = QCalendar.daysInMonth(year, month);
       return dias;
+    },
+    generaOpcionesUsuariosDias: function() {
+      let options = { ...configUsuarioDias };
+      options.xaxis = {
+        categories: this.obtenNombres()
+      };
+      return options;
+      // Genero los datos
+    },
+    generaValoresUsuariosDias: function() {
+      let valores = [...objDiasSemana];
+      valores.forEach((dia, indice) => {
+        valores[indice].data = [];
+      });
+      this.usuarios.forEach(usuario => {
+        let dias = this.diasUsuario(usuario.id);
+        for (let x = 0; x < 5; x++) {
+          valores[x].data.push(this.cuentaDiasSemana(x + 1, dias));
+        }
+      });
+      return valores;
+    },
+    generaOpcionesDiasUsuarios: function() {
+      let options = { ...configDiasUsuario };
+      return options;
+    },
+    generaValoresDiasUsuarios: function() {
+      let datos = [];
+      this.usuarios.forEach(usuario => {
+        let objeto = {};
+        objeto.name = usuario.username;
+        objeto.data = [];
+        let dias = this.diasUsuario(usuario.id);
+        for (let x = 0; x < 5; x++) {
+          objeto.data.push(this.cuentaDiasSemana(x + 1, dias));
+        }
+        datos.push(objeto);
+      });
+      return datos;
+    },
+    generaOpcionesTotalDias: function() {
+      let options = {
+        chart: {
+          type: "donut"
+        },
+        labels: this.obtenNombres()
+      };
+      return options;
+    },
+    generaValoresTotalDias: function() {
+      let dias = [];
+      this.usuarios.forEach(usuario => {
+        dias.push(this.diasUsuario(usuario.id).length);
+      });
+      return dias;
+    },
+    generaOpcionesOcupacion: function() {
+      let options = {
+        chart: {
+          type: "donut"
+        },
+        labels: arrDiasSemana
+      };
+
+      return options;
+    },
+    generaValoresOcupacion: function() {
+      let objeto = [];
+      for (let x = 0; x < 5; x++) {
+        objeto.push(this.cuentaDiasSemana(x + 1, this.fechas));
+      }
+      return objeto;
+    },
+
+    obtenNombres: function() {
+      let nombre = [];
+      this.usuarios.forEach(usuario => nombre.push(usuario.username));
+      return nombre;
+    },
+    diasUsuario: function(usuario) {
+      let dias = [];
+      this.fechas.forEach(dia => {
+        if (dia.UsuarioId == usuario) {
+          dias.push(dia);
+        }
+      });
+      return dias;
+    },
+    cuentaDiasSemana: function(diaSem, dias) {
+      //Diasem 0 para el domingo
+      let cuenta = 0;
+      dias.forEach(dia => {
+        let date = new Date(dia.dia);
+        if (date.getDay() == diaSem) {
+          cuenta++;
+        }
+      });
+      return cuenta;
     }
   },
   mounted() {
-    this.fillData();
-  },
-  beforeDestroy() {}
+    this.generatotal();
+    this.generaValoresUsuariosDias();
+  }
 };
 </script>
 <style scoped>
