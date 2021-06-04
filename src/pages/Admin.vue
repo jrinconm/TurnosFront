@@ -1,13 +1,11 @@
 <!-- Aqui template, donde ira el HTML que Vue renderizara -->
 <template>
   <div>
-    <div class="row q-pa-sm q-ma-md-xl q-pa-md-xl">
-      <div class="col-sm-8 col-xs-12">
+    <div class="row q-pa-sm q-ma-md-md q-pa-md-md">
+      <div class="col-sm-7 col-xs-12 q-ma-md-md q-pa-md-md ">
         <gestorusuario></gestorusuario>
       </div>
-    </div>
-    <div class="row q-pa-md-sx q-ma-md-xl ">
-      <div class="col-sm-4 col-xs-12">
+      <div class="col-sm-4 col-xs-12 q-ma-md-md q-pa-md-md">
         <editordias></editordias>
       </div>
     </div>

@@ -2,11 +2,15 @@
 <template>
   <div class="">
     <q-table
+      style="height: 85vh"
+      virtual-scroll
       title="Gestion de usuarios"
       :data="data"
       row-key="name"
       binary-state-sort
       :columns="columns"
+      :pagination.sync="pagination"
+      :rows-per-page-options="[0]"
     >
       <template v-slot:top-right>
         <q-btn
@@ -140,6 +144,9 @@ export default {
         username: "",
         email: "",
         rol: "base"
+      },
+      pagination: {
+        rowsPerPage: 0
       },
       errorRol: false,
       errorMessageRol: "",

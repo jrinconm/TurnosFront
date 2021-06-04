@@ -1,12 +1,16 @@
 <!-- Aqui template, donde ira el HTML que Vue renderizara -->
 <template>
-  <div class="q-ma-md-xl">
+  <div>
     <q-table
-      :title="tabla.nombre"
+      title="Gestión de días"
       :data="data"
       row-key="id"
       binary-state-sort
       :columns="columns"
+      style="height: 85vh"
+      virtual-scroll
+      :pagination.sync="pagination"
+      :rows-per-page-options="[0]"
     >
     </q-table>
   </div>
@@ -104,6 +108,9 @@ export default {
       },
       defaultItem: {
         name: ""
+      },
+      pagination: {
+        rowsPerPage: 0
       },
       //visibleColumns: ["descripcion", "actions"],
       columns: [
