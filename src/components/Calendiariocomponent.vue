@@ -164,6 +164,7 @@ export default {
   data() {
     return {
       selectedDate: "",
+      usuariosDep: [],
       now: "",
       events: [],
       color: "",
@@ -187,12 +188,16 @@ export default {
     }, // store the username in localstorage
     rol: function() {
       return localStorage.getItem("rol");
+    }, // store the username in localstorage
+    departamento: function() {
+      return localStorage.getItem("departamento");
     } // store the username in localstorage
   },
   mounted() {
-    //this.mostrarimprimir = imprimir;
+    //Carga inicial de datos
     this.obtenconfig();
     this.obtendatos();
+    this.obtenUsuariosArea();
   },
   beforeMount() {
     // set "now" a hoy
@@ -205,6 +210,7 @@ export default {
       this.$refs.calendar.next();
     },
     obtenconfig() {
+      let vm = this;
       // Obtengo la configuracion del usuario
       api
         .get("/api/user/id?id=" + this.id, {
@@ -234,6 +240,7 @@ export default {
       //this.title = start;
     },
     obtendatos() {
+      let vm = this;
       api
         // Obtengo todos los días del mismo departamento que del usuario
         .get("/api/diapresencial/usuariodep?id=" + this.id, {
@@ -268,49 +275,213 @@ export default {
       };
       return evento;
     },
+    addEvento(fecha) {
+      // Datos para los eventos
+      let consulta = {
+        dia: fecha,
+        Usuario: {
+          username: this.username,
+          color: this.color,
+          icon: this.icono
+        }
+      };
+      let evento = this.generaevento(consulta);
+      this.agregarDia(evento);
+    },
+    clickRolBase(data) {
+      let vm = this;
+      let fecha = data.scope.timestamp.date;
+      if (fecha < QCalendar.today()) {
+        alerta(vm, "No puedes cambiar el pasado, mejora el futuro");
+      } else {
+        // Por defecto añado el dia
+        let aditar = true;
+        // Recorro los eventos y miro si ya tengo marcado el dia
+        for (let i = 0; i < this.events.length; ++i) {
+          if (
+            this.events[i].date == fecha &&
+            this.events[i].title === this.username
+          ) {
+            if (this.events[i].estado === "Confirmado" && this.rol === "base") {
+              alerta(vm, "Dia ya confirmado, no se puede modificar");
+            } else {
+              this.consultarModificarDia(this.events[i].id);
+            }
+            //Lo marcamos para no añadir
+            aditar = false;
+          }
+        }
+        // Si tenemos que aditar construyo el evento
+        if (aditar) {
+          this.addEvento(fecha);
+        }
+      }
+    },
+    asignarEventoGestor(fecha) {
+      let vm = this;
+      let dia = { date: fecha };
+
+      let usadosconId = this.obtenUsuariosFecha(fecha);
+      let usados = [];
+      usadosconId.forEach(item => {
+        usados.push(item[0][0]);
+      });
+      let items = [];
+      this.usuariosDep.forEach(usuario => {
+        if (!usados.includes(usuario.username)) {
+          items.push({ label: usuario.username, value: usuario.id });
+        }
+      });
+      if (items.length <= 0) {
+        alerta(vm, "No quedan colaboradores por asignar");
+      } else {
+        this.$q
+          .dialog({
+            title: "Asignación de días",
+            options: {
+              type: "checkbox",
+              model: [],
+              items: items
+            },
+            cancel: true,
+            persistent: true
+          })
+          .onOk(eleccion => {
+            eleccion.forEach(usuario => {
+              this.agregarDia(dia, usuario);
+            });
+          });
+      }
+    },
+    eliminarEventoGestor(fecha) {
+      let vm = this;
+      let usadosconId = this.obtenUsuariosFecha(fecha);
+      let items = [];
+      usadosconId.forEach(usuario => {
+        items.push({ label: usuario[0][0], value: usuario[1][0] });
+      });
+      if (items.length <= 0) {
+        alerta(vm, "No hay colaboradores asignados");
+      } else {
+        this.$q
+          .dialog({
+            title: "Eliminación de días",
+            options: {
+              type: "checkbox",
+              model: [],
+              items: items
+            },
+            cancel: true,
+            persistent: true
+          })
+          .onOk(eleccion => {
+            eleccion.forEach(dia => {
+              this.eliminarDia(dia);
+            });
+          });
+      }
+    },
+    obtenUsuariosArea() {
+      let vm = this;
+      api
+        // Obtengo todos los días del mismo departamento que del usuario
+        .get("/api/user/dep?departamento=" + this.departamento, {
+          headers: { "x-access-token": this.JWTToken }
+        })
+        .then(response => {
+          this.usuariosDep = response.data;
+        })
+        .catch(error => {
+          notifica(vm, "negative", error);
+        });
+    },
+    obtenUsuariosFecha(dia) {
+      let usuario = [];
+      this.events.forEach(evento => {
+        if (evento.date == dia) {
+          usuario.push([[evento.title], [evento.id]]);
+        }
+      });
+      return usuario;
+    },
+    eleccionesGestor(fecha, eleccion) {
+      switch (eleccion) {
+        case "Marcar":
+          this.addEvento(fecha);
+          break;
+        case "Asignar":
+          this.asignarEventoGestor(fecha);
+          break;
+        case "Eliminar":
+          this.eliminarEventoGestor(fecha);
+          break;
+        default:
+          break;
+      }
+    },
+    clickRolGestor(data) {
+      let vm = this;
+      let fecha = data.scope.timestamp.date;
+      let items = [
+        {
+          label: "Marcar día presencial propio",
+          value: "Marcar",
+          color: "positive"
+        },
+        {
+          label: "Asignar día",
+          value: "Asignar",
+          color: "secondary"
+        },
+        {
+          label: "Eliminar dia",
+          value: "Eliminar",
+          color: "negative"
+        }
+      ];
+
+      this.$q
+        .dialog({
+          title: "Gestión día",
+          options: {
+            type: "radio",
+            model: "optGestor",
+            items: items
+          },
+          cancel: true,
+          persistent: true
+        })
+        .onOk(eleccion => {
+          this.eleccionesGestor(fecha, eleccion);
+        });
+    },
     onClickDay2(data) {
       let vm = this;
       // Si es un dia en el pasado no dejo aditar
-      if (
-        data.scope.timestamp.date < QCalendar.today() &&
-        this.rol === "base"
-      ) {
-        alert("No puedes cambiar el pasado, mejora el futuro");
-        eliminar = false;
-      }
-      // Por defecto añado el dia
-      let aditar = true;
-      // Recorro los eventos y miro si ya tengo marcado el dia
-      for (let i = 0; i < this.events.length; ++i) {
-        if (
-          this.events[i].date == data.scope.timestamp.date &&
-          this.events[i].title === this.username
-        ) {
-          if (this.events[i].estado === "Confirmado" && this.rol === "base") {
-            alerta(vm, "Dia ya confirmado, no se puede modificar");
-          } else {
-            this.consultarModificarDia(this.events[i].id);
-          }
-          //Lo marcamos para no añadir
-          aditar = false;
-        }
-      }
-      // Si tenemos que aditar construyo el evento
-      if (aditar) {
-        // Datos para los eventos
-        let consulta = {
-          dia: data.scope.timestamp.date,
-          Usuario: {
-            username: this.username,
-            color: this.color,
-            icon: this.icono
-          }
-        };
-        let evento = this.generaevento(consulta);
-        this.agregarDia(evento);
+      if (this.rol === "base") {
+        this.clickRolBase(data);
+      } else {
+        this.clickRolGestor(data);
       }
     },
     consultarModificarDia(id) {
+      let items = [
+        {
+          label: "Confimar día presencial",
+          value: "Confirmado",
+          color: "positive"
+        },
+        {
+          label: "Solicitar cambio",
+          value: "CambioPedido",
+          color: "secondary"
+        },
+        {
+          label: "Eliminar día presencial",
+          color: "negative",
+          value: false
+        }
+      ];
       this.$q
         .dialog({
           title: "Modificar dia",
@@ -318,38 +489,18 @@ export default {
             type: "radio",
             model: "opt1",
             // inline: true
-            items: [
-              {
-                label: "Confimar día presencial",
-                value: "Confirmado",
-                color: "positive"
-              },
-              {
-                label: "Solicitar cambio",
-                value: "CambioPedido",
-                color: "secondary"
-              },
-              {
-                label: "Eliminar día presencial",
-                color: "negative",
-                value: false
-              }
-            ]
+            items: items
           },
           cancel: true,
           persistent: true
         })
-        .onOk(
-          data => {
-            if (data) {
-              this.cambiarEstadoDia(id, data);
-            } else {
-              this.eliminarDia(id);
-            }
+        .onOk(data => {
+          if (data) {
+            this.cambiarEstadoDia(id, data);
+          } else {
+            this.eliminarDia(id);
           }
-
-          //
-        );
+        });
     },
     cambiarEstadoDia(id, estado) {
       let vm = this;
@@ -369,6 +520,7 @@ export default {
         });
     },
     eliminarDia(id) {
+      let vm = this;
       api
         .delete("/api/diapresencial/id?id=" + id, {
           headers: { "x-access-token": this.JWTToken }
@@ -398,9 +550,10 @@ export default {
         confirmado: !isHeader && event.estado === "Confirmado"
       };
     },
-    agregarDia: function(dia) {
+    agregarDia(dia, usuario = this.id) {
+      let vm = this;
       // Obtenemos del click los datos
-      let body = { dia: dia.date, usuario: this.id };
+      let body = { dia: dia.date, usuario: usuario };
       api
         .post("/api/diapresencial/", body, {
           headers: { "x-access-token": this.JWTToken }
