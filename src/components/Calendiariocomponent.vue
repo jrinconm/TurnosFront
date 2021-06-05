@@ -227,7 +227,7 @@ export default {
             : (this.icono = "work");
         })
         .catch(error => {
-          notifica(vm, "negative", error);
+          notifica(vm, "negative", error.response.data.message);
         });
     },
     onChange({ start }) {
@@ -257,7 +257,7 @@ export default {
           });
         })
         .catch(error => {
-          notifica(vm, "negative", error);
+          notifica(vm, "negative", error.response.data.message);
         });
     },
     calendarPrev() {
@@ -392,7 +392,7 @@ export default {
           this.usuariosDep = response.data;
         })
         .catch(error => {
-          notifica(vm, "negative", error);
+          notifica(vm, "negative", error.response.data.message);
         });
     },
     obtenUsuariosFecha(dia) {
@@ -516,7 +516,7 @@ export default {
           this.obtendatos();
         })
         .catch(error => {
-          notifica(vm, "negative", error);
+          notifica(vm, "negative", error.response.data.message);
         });
     },
     eliminarDia(id) {
@@ -530,7 +530,7 @@ export default {
           this.obtendatos();
         })
         .catch(error => {
-          notifica(vm, "negative", error);
+          notifica(vm, "negative", error.response.data.message);
         });
     },
     onClickWorkweek2(data) {},
@@ -563,7 +563,7 @@ export default {
           this.obtendatos();
         })
         .catch(error => {
-          notifica(vm, "negative", error);
+          notifica(vm, "negative", error.response.data.message);
         });
     },
     badgeStyles(event, type, timeStartPos, timeDurationHeight) {

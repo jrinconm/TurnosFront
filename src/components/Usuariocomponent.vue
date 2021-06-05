@@ -272,7 +272,7 @@ export default {
           this.data = response.data;
         })
         .catch(error => {
-          notifica(vm, "negative", error);
+          notifica(vm, "negative", error.response.data.message);
         });
     },
     addRow() {
@@ -294,7 +294,7 @@ export default {
             this.obtendatos();
           })
           .catch(error => {
-            notifica(vm, "negative", error);
+            notifica(vm, "negative", error.response.data.message);
           });
 
         console.log(body);
@@ -328,7 +328,7 @@ export default {
           this.obtendatos();
         })
         .catch(error => {
-          notifica(vm, "negative", error);
+          notifica(vm, "negative", error.response.data.message);
         });
       this.obtendatos();
     },
@@ -365,7 +365,7 @@ export default {
           this.obtendatos();
         })
         .catch(error => {
-          notifica(vm, "negative", error);
+          notifica(vm, "negative", error.response.data.message);
         });
     },
     actualizar(item) {
@@ -383,7 +383,7 @@ export default {
           this.obtendatos();
         })
         .catch(error => {
-          notifica(vm, "negative", error);
+          notifica(vm, "negative", error.response.data.message);
         });
     },
     close() {
