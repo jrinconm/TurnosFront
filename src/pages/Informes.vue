@@ -72,6 +72,9 @@ export default {
     hoy: function() {
       return new Date();
     },
+    id: function() {
+      return localStorage.getItem("id");
+    },
     departamento: function() {
       return localStorage.getItem("departamento");
     },

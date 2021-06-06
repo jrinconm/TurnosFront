@@ -28,7 +28,10 @@ export default function(/* { store, ssrContext } */) {
   Router.beforeEach(async (to, from, next) => {
     // Si es necesaria la auth y no hay usuario
     const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+    const requiresaDMIN = to.matched.some(record => record.meta.requiresAdmin);
     if (requiresAuth && store.getters["auth/isAuthenticated"]) next("/login");
+    if (requiresAdmin && store.getters["auth/isAdmin"] == "Admin")
+      next("/login");
     // Si estoy autentificado y estoy por ahí
     // else if (!requiresAuth && currentUser) next("/calendario");
     // Si estoy bien tiro millas
