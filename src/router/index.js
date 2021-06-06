@@ -30,7 +30,7 @@ export default function(/* { store, ssrContext } */) {
     const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
     const requiresAdmin = to.matched.some(record => record.meta.requiresAdmin);
     if (requiresAuth && store.getters["auth/isAuthenticated"]) next("/login");
-    if (requiresAdmin && store.getters["auth/isAdmin"] == "Admin")
+    if (requiresAdmin && store.getters["auth/isAdmin"] !== "admin")
       next("/login");
     // Si estoy autentificado y estoy por ahí
     // else if (!requiresAuth && currentUser) next("/calendario");
