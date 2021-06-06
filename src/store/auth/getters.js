@@ -10,6 +10,6 @@ export function isAuthenticated(state) {
 export function authStatus(state) {
   return state.status;
 }
-export function isAdmin(admin) {
-  return !!admin.rol;
+export function isAdmin(state) {
+  return !!state.rol;
 }

@@ -20,6 +20,15 @@ export default {
   components: {
     editordias,
     gestorusuario
+  },
+  beforeMount() {
+    //Por si algun listo quiere entrar a fuego
+    let rol = localStorage.getItem("rol");
+    if (rol != "admin") {
+      this.$store.dispatch("auth/AUTH_LOGOUT").then(() => {
+        this.$router.push("/login");
+      });
+    }
   }
 };
 </script>

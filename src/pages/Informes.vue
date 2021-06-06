@@ -260,6 +260,15 @@ export default {
       return cuenta;
     }
   },
+  beforeMount() {
+    //Por si algun listo quiere entrar a fuego
+    let rol = localStorage.getItem("rol");
+    if (rol != "admin" && rol != "gestor") {
+      this.$store.dispatch("auth/AUTH_LOGOUT").then(() => {
+        this.$router.push("/login");
+      });
+    }
+  },
   mounted() {
     this.generatotal();
     this.generaValoresUsuariosDias();

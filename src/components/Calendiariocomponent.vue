@@ -228,6 +228,9 @@ export default {
         })
         .catch(error => {
           notifica(vm, "negative", error.response.data.message);
+          this.$store.dispatch("auth/AUTH_LOGOUT").then(() => {
+            this.$router.push("/login");
+          });
         });
     },
     onChange({ start }) {
