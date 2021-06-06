@@ -264,6 +264,7 @@ export default {
       return true;
     },
     obtendatos() {
+      let vm = this;
       api
         .get("/api/user/", {
           headers: { "x-access-token": this.JWTToken }
@@ -276,6 +277,7 @@ export default {
         });
     },
     addRow() {
+      let vm = this;
       if (this.editedIndex > -1) {
         Object.assign(this.data[this.editedIndex], this.editedItem);
       } else {
@@ -319,6 +321,7 @@ export default {
         });
     },
     borraDatoTabla(id) {
+      let vm = this;
       api
         .delete("/api/user/id?id=" + id, {
           headers: { "x-access-token": this.JWTToken }
@@ -356,6 +359,7 @@ export default {
         });
     },
     actualizacampo(id, campo) {
+      let vm = this;
       api
         .put("/api/user/id?id=" + id, campo, {
           headers: { "x-access-token": this.JWTToken }
@@ -369,6 +373,7 @@ export default {
         });
     },
     actualizar(item) {
+      let vm = this;
       let body = { ...item };
       // Elimino lo que no necesito actualizar
       delete body.id;
