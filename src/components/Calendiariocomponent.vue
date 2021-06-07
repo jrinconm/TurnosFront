@@ -36,7 +36,7 @@
     <q-separator class="full-width" />
     <div class="row">
       <div class="sm col-sm-1 q-pa-sm q-mt-xl"></div>
-      <div class="col-xs-12 col-sm-10 q-pa-sm q-mt-xl">
+      <div class="col-xs-12 col-sm-12 q-pa-sm q-mt-xl">
         <div class="text-center q-mx-xl q-mt-sm vistacalendario">
           <q-calendar
             ref="calendar"

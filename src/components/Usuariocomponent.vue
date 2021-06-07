@@ -2,7 +2,7 @@
 <template>
   <div class="">
     <q-table
-      style="height: 85vh"
+      style="height: 45vh"
       virtual-scroll
       title="Gestion de usuarios"
       :data="data"
@@ -15,12 +15,20 @@
       <template v-slot:top-right>
         <q-btn
           align="right"
-          dense
           color="secondary"
           label="Añadir un item"
           @click="show_dialog = true"
           no-caps
+          class="q-mr-lg"
         ></q-btn>
+        <q-btn
+          outline
+          color="primary"
+          icon-right="archive"
+          label="Export to csv"
+          no-caps
+          @click="exportTable"
+        />
         <div class="q-pa-sm q-gutter-sm">
           <q-dialog v-model="show_dialog">
             <q-card>
@@ -127,6 +135,23 @@
 <script>
 import { api } from "boot/axios";
 import { notifica } from "src/Includes/funciones";
+import { exportFile } from "quasar";
+function wrapCsvValue(val, formatFn) {
+  let formatted = formatFn !== void 0 ? formatFn(val) : val;
+
+  formatted =
+    formatted === void 0 || formatted === null ? "" : String(formatted);
+
+  formatted = formatted.split('"').join('""');
+  /**
+   * Excel accepts \n and \r in strings, but some other CSV parsers do not
+   * Uncomment the next two lines to escape new lines
+   */
+  // .split('\n').join('\\n')
+  // .split('\r').join('\\r')
+
+  return `"${formatted}"`;
+}
 export default {
   name: "gestorusuario",
   data() {
@@ -253,6 +278,35 @@ export default {
     this.obtendatos();
   },
   methods: {
+    exportTable() {
+      // naive encoding to csv format
+      const content = [this.columns.map(col => wrapCsvValue(col.label))]
+        .concat(
+          this.data.map(row =>
+            this.columns
+              .map(col =>
+                wrapCsvValue(
+                  typeof col.field === "function"
+                    ? col.field(row)
+                    : row[col.field === void 0 ? col.name : col.field],
+                  col.format
+                )
+              )
+              .join(",")
+          )
+        )
+        .join("\r\n");
+
+      const status = exportFile("table-export.csv", content, "text/csv");
+
+      if (status !== true) {
+        this.$q.notify({
+          message: "Browser denied file download...",
+          color: "negative",
+          icon: "warning"
+        });
+      }
+    },
     compruebarol(val) {
       if (val != "base" && val != "admin" && val != "gestor") {
         this.errorRol = true;

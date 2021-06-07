@@ -1,28 +1,66 @@
 <!-- Aqui template, donde ira el HTML que Vue renderizara -->
 <template>
   <div class="graficos">
+    <div class="row justify-center col-12 col-md-auto q-pa-sm q-ma-sm">
+      <q-btn
+        rounded
+        :disable="graficovisible == 'diasusuario'"
+        color="primary"
+        label="Dias por usuario mensual"
+        class="q-ma-sm"
+        @click="graficovisible = 'diasusuario'"
+      />
+      <q-btn
+        rounded
+        :disable="graficovisible == 'usuariodias'"
+        color="primary"
+        label="Dias por usuario mensual"
+        class="q-ma-sm"
+        @click="graficovisible = 'usuariodias'"
+      />
+      <q-btn
+        rounded
+        :disable="graficovisible == 'total'"
+        color="primary"
+        label="Total días mensual"
+        class="q-ma-sm"
+        @click="graficovisible = 'total'"
+      />
+      <q-btn
+        rounded
+        :disable="graficovisible == 'porcentaje'"
+        color="primary"
+        label="Porcentaje ocupación diaria"
+        class="q-ma-sm"
+        @click="graficovisible = 'porcentaje'"
+      />
+    </div>
     <q-separator />
-    <div class="row q-pa-sm q-ma-md-lg">
-      <div class="col-sm-4 col-xs-12 q-mx-md-xl q-px-md-xl">
+    <div class="row justify-center ">
+      <div
+        v-if="graficovisible == 'diasusuario'"
+        class="col-sm-8 col-xs-12 q-mx-md-xl q-px-md-xl"
+      >
         <h6 class="centrado">Dias por usuario</h6>
         <apexchart
           :options="opcionesDiasUsuarios"
           :series="valoresDiasUsuarios"
         ></apexchart>
       </div>
-      <q-separator vertical />
-
-      <div class="col-sm-4 col-xs-12 q-mx-md-xl q-px-md-xl">
+      <div
+        v-if="graficovisible == 'usuariodias'"
+        class="col-sm-8 col-xs-12 q-mx-md-xl q-px-md-xl"
+      >
         <h6 class="centrado">Usuario por días</h6>
         <apexchart
           :options="opcionesUsuariosDias"
           :series="valoresUsuariosDias"
         ></apexchart>
       </div>
-    </div>
-    <q-separator />
-    <div class="row q-pa-sm q-ma-md-lg ">
-      <div class="col-sm-4 col-xs-12 q-mx-md-xl q-px-md-xl">
+      <div
+        v-if="graficovisible == 'total'"
+        class="col-sm-7 col-xs-12 q-mx-md-xl q-px-md-xl"
+      >
         <h6 class="centrado">Total días</h6>
         <apexchart
           type="donut"
@@ -30,8 +68,11 @@
           :series="valoresTotalDias"
         ></apexchart>
       </div>
-      <q-separator vertical />
-      <div class="col-sm-4 col-xs-12 q-mx-md-xl q-px-md-xl">
+
+      <div
+        v-if="graficovisible == 'porcentaje'"
+        class="col-sm-7 col-xs-12 q-mx-md-xl q-px-md-xl"
+      >
         <h6 class="centrado">Porcentaje ocupación diaria</h6>
         <apexchart
           :options="opcionesOcupacion"
@@ -62,7 +103,9 @@ export default {
     return {
       consulta: "",
       usuarios: [],
-      fechas: []
+      fechas: [],
+      graficos: ["diasusuario", "usuariodias", "total", "porcentaje"],
+      graficovisible: "diasusuario"
     };
   },
   computed: {

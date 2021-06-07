@@ -1,12 +1,21 @@
 <!-- Aqui template, donde ira el HTML que Vue renderizara -->
 <template>
   <div class="salida fixed-center text-center">
-    <h3>Salir</h3>
     <q-btn
+      rounded
+      size="xl"
+      class="q-px-xl q-py-xs q-ma-xl"
+      color="blue"
+      label="Permanecer"
+      @click="permanecer"
+    />
+    <q-btn
+      rounded
+      size="xl"
+      class="q-px-xl q-py-xs q-ma-xl"
+      color="red"
+      label="Salir"
       @click="salidaUsuario"
-      color="white"
-      text-color="black"
-      label="LOGOUT"
     />
   </div>
 </template>
@@ -22,6 +31,9 @@ export default {
       this.$store.dispatch("auth/AUTH_LOGOUT").then(() => {
         this.$router.push("/login");
       });
+    },
+    permanecer() {
+      this.$router.push("/calendario");
     }
   }
 };

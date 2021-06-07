@@ -1,13 +1,19 @@
 <!-- Aqui template, donde ira el HTML que Vue renderizara -->
 <template>
   <div>
-    <div class="row q-pa-sm q-ma-md-md q-pa-md-md">
-      <div class="col-sm-7 col-xs-12 q-ma-md-md q-pa-md-md ">
+    <div class="row q-pa-sm q-ma-md-sm q-pa-md-sm">
+      <div class="col-sm-12 col-xs-12 q-ma-md-sm q-pa-md-sm ">
         <gestorusuario></gestorusuario>
       </div>
-      <div class="col-sm-4 col-xs-12 q-ma-md-md q-pa-md-md">
+      <div class="col-sm-4 col-xs-12 q-ma-md-xs q-pa-md-xs">
         <editordias></editordias>
       </div>
+      <!-- <div class="col-sm-3 col-xs-12 q-ma-md-xs q-pa-md-xs">
+        <editor-roles></editor-roles>
+      </div>
+      <div class="col-sm-4 col-xs-12 q-ma-md-xs q-pa-md-xs">
+        <editor-departamentos></editor-departamentos>
+      </div> -->
     </div>
   </div>
 </template>
@@ -15,11 +21,15 @@
 <script>
 import editordias from "../components/EditorDiaPresencial.vue";
 import gestorusuario from "../components/Usuariocomponent.vue";
+//import editorRoles from "../components/EditorRoles.vue";
+//import editorDepartamentos from "../components/EditorDepartamentos.vue";
 export default {
   name: "Administracion",
   components: {
     editordias,
     gestorusuario
+    //    editorRoles,
+    //    editorDepartamentos
   },
   beforeMount() {
     //Por si algun listo quiere entrar a fuego

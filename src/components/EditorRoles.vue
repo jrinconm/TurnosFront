@@ -1,51 +1,13 @@
 <!-- Aqui template, donde ira el HTML que Vue renderizara -->
 <template>
-  <div>
+  <div class="q-pa-md">
     <q-table
-      title="Visor de días"
+      :title="tabla.nombre"
       :data="data"
-      row-key="id"
+      row-key="name"
       binary-state-sort
       :columns="columns"
-      style="height: 40vh"
-      virtual-scroll
-      :pagination.sync="pagination"
-      :rows-per-page-options="[0]"
     >
-      <template v-slot:top-right>
-        <q-btn
-          outline
-          color="primary"
-          icon-right="archive"
-          label="Export to csv"
-          no-caps
-          @click="exportTable"
-        />
-      </template>
-    </q-table>
-  </div>
-</template>
-<!-- Aqui script, donde irá el Javascript (métodos, funciones, etc) -->
-<script>
-import { exportFile } from "quasar";
-
-function wrapCsvValue(val, formatFn) {
-  let formatted = formatFn !== void 0 ? formatFn(val) : val;
-
-  formatted =
-    formatted === void 0 || formatted === null ? "" : String(formatted);
-
-  formatted = formatted.split('"').join('""');
-  /**
-   * Excel accepts \n and \r in strings, but some other CSV parsers do not
-   * Uncomment the next two lines to escape new lines
-   */
-  // .split('\n').join('\\n')
-  // .split('\r').join('\\r')
-
-  return `"${formatted}"`;
-}
-/*
       <template v-slot:top-right>
         <q-btn
           align="right"
@@ -83,23 +45,21 @@ function wrapCsvValue(val, formatFn) {
       </template>
       <template v-slot:body="props">
         <q-tr :props="props">
-          <q-td v-for="(column, key) in columnasvisibles" v-bind:key="key">
-            <q-popup-edit
-              v-if="
-                column.name !== 'id' &&
-                  column.name !== 'dia' &&
-                  column.name !== 'usuario'
-              "
-              v-model="props.row[column.name]"
-            >
-              <q-input v-model="props.row[column.name]" dense autofocus counter>
-                <template v-slot:append>
-                  <q-icon name="edit" />
-                </template>
-              </q-input>
+          <q-td key="descripcion" :props="props">
+            <q-badge
+              outline
+              color="primary"
+              :label="props.row.descripcion"
+              class="q-ma-sm q-pa-sm"
+            />
+            <q-popup-edit v-model="props.row.descripcion">
+              <q-input
+                v-model="props.row.descripcion"
+                dense
+                autofocus
+                counter
+              />
             </q-popup-edit>
-            {{ props.row[column.name] }}
-            {{ key }}
           </q-td>
           <q-td key="actions" :props="props">
             <q-btn
@@ -120,15 +80,18 @@ function wrapCsvValue(val, formatFn) {
           </q-td>
         </q-tr>
       </template>
-*/
-
+    </q-table>
+  </div>
+</template>
+<!-- Aqui script, donde irá el Javascript (métodos, funciones, etc) -->
+<script>
 import { api } from "boot/axios";
 export default {
   name: "editortablas",
+  props: ["tabla"],
   data() {
     return {
       data: [],
-      tabla: "DiaPresencial",
       show_dialog: false,
       editedIndex: -1,
       editedItem: {
@@ -137,46 +100,21 @@ export default {
       defaultItem: {
         name: ""
       },
-      pagination: {
-        rowsPerPage: 0
-      },
       //visibleColumns: ["descripcion", "actions"],
       columns: [
         {
-          name: "id",
+          name: "descripcion",
           required: true,
-          label: "ID",
+          label: "DESCRIPCIÓN",
           align: "left",
-          field: row => row.id,
+          field: row => row.name,
           format: val => `${val}`,
           sortable: true
         },
         {
-          name: "dia",
-          required: true,
-          label: "Dia",
-          align: "left",
-          field: row => row.dia,
-          format: val => `${val}`,
-          sortable: true
-        },
-        {
-          name: "estado",
-          required: true,
-          label: "Estado",
-          align: "left",
-          field: row => row.estado,
-          format: val => `${val}`,
-          sortable: true
-        },
-        {
-          name: "usuario",
-          required: true,
-          label: "Usuario",
-          align: "left",
-          sortable: true,
-          field: row => row.Usuario.username,
-          format: val => `${val}`
+          name: "actions",
+          label: "Acciones",
+          field: "actions"
         }
       ]
     };
@@ -190,61 +128,15 @@ export default {
     }, // store the id in localstorage
     username: function() {
       return localStorage.getItem("username");
-    }, // store the username in localstorage
-    columnasvisibles: function() {
-      let ver = this.columns.filter(function(columna) {
-        return columna.name != "usuario";
-      });
-      console.log(ver);
-      return ver;
-    },
-    nombres: function() {
-      //Obtengo los nombres de las tablas
-      let vm = this;
-      let nombres = [];
-      this.data.forEach(element => {
-        console.log(element.UsuarioId + " ->" + element.Usuario.username);
-        vm.$set(nombres, element.UsuarioId, element.Usuario.username);
-      });
-      return nombres;
-    }
+    } // store the username in localstorage
   },
   mounted() {
     this.obtendatos();
   },
   methods: {
-    exportTable() {
-      // naive encoding to csv format
-      const content = [this.columns.map(col => wrapCsvValue(col.label))]
-        .concat(
-          this.data.map(row =>
-            this.columns
-              .map(col =>
-                wrapCsvValue(
-                  typeof col.field === "function"
-                    ? col.field(row)
-                    : row[col.field === void 0 ? col.name : col.field],
-                  col.format
-                )
-              )
-              .join(",")
-          )
-        )
-        .join("\r\n");
-
-      const status = exportFile("table-export.csv", content, "text/csv");
-
-      if (status !== true) {
-        this.$q.notify({
-          message: "Browser denied file download...",
-          color: "negative",
-          icon: "warning"
-        });
-      }
-    },
     obtendatos() {
       api
-        .get("/api/" + this.tabla + "/", {
+        .get("/api/" + this.tabla.tabla + "/", {
           headers: { "x-access-token": this.JWTToken }
         })
         .then(response => {

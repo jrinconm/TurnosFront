@@ -54,7 +54,7 @@
             :loading="submitting"
             :disable="cambios"
             label="Guardar cambios"
-            class="q-mt-md"
+            class="q-mt-md q-ml-lg"
             color="teal"
           >
             <template v-slot:loading>
@@ -231,6 +231,8 @@ export default {
     padding: 1rem
 .configuracion
   margin: 2rem
+.my-input
+  margin-left: -2.2rem
 @media (max-width: $breakpoint-xs-max)
   .infoactual,.eligecolor
     width: 90vw
